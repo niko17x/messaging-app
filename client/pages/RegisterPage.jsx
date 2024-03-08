@@ -38,7 +38,22 @@ export const RegisterPage = () => {
       });
 
       if (response.ok) {
-        console.log("Registration successful");
+        console.log(`Registration successful: ${response.message}`);
+        toast.success("Registration successful", {
+          toastId: "succ-1",
+        });
+        setFormData({
+          firstName: "",
+          lastName: "",
+          username: "",
+          email: "",
+          password: "",
+        });
+      } else {
+        const data = await response.json();
+        data.errors.forEach((error) => {
+          toast.error(error.msg, { toastId: error.param });
+        });
       }
     } catch (err) {
       console.error(`Error registering user: ${err.message}`);
@@ -107,6 +122,7 @@ export const RegisterPage = () => {
           <button type="submit">Register</button>
         </form>
       </div>
+      {/* <ToastContainer /> */}
     </div>
   );
 };

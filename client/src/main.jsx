@@ -1,16 +1,41 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.scss";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  createRoutesFromElements,
+  Route,
+} from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import { App } from "./App";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
+import { HomePage } from "../pages/HomePage";
 
-const router = createBrowserRouter([
-  { path: "/", element: <App /> },
-  { path: "/login", element: <LoginPage /> },
-  { path: "/register", element: <RegisterPage /> },
-]);
+import "./index.scss";
+import "react-toastify/dist/ReactToastify.css";
+import ErrorPage from "../pages/ErrorPage";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<App />} />
+      <Route index={true} path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="*" element={<ErrorPage />} />
+    </>
+  )
 );
+
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+
+  root.render(
+    <React.StrictMode>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </React.StrictMode>
+  );
+}
