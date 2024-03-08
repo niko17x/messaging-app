@@ -10,6 +10,7 @@ import { userValidations } from "../validations/userValidations.js";
 
 const router = express.Router();
 
+// todo: protect these routes once able
 router.post("/register", userValidations(), registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
