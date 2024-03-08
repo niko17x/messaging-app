@@ -16,12 +16,13 @@ const userSchema = mongoose.Schema(
     username: {
       type: String,
       trim: true,
+      index: { unique: true },
       required: true,
     },
     email: {
       type: String,
-      unique: true,
       trim: true,
+      index: { unique: true },
       required: true,
     },
     password: {
@@ -54,6 +55,10 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 
 userSchema.statics.findUserByEmail = async function (email) {
   return this.findOne({ email });
+};
+
+userSchema.statics.findUserByUsername = async function (username) {
+  return this.findOne({ username });
 };
 
 const User = mongoose.model("User", userSchema);

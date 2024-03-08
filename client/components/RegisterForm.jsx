@@ -38,9 +38,10 @@ export const RegisterForm = () => {
       });
 
       if (response.ok) {
-        console.log(`Registration successful: ${response.message}`);
+        const data = await response.json();
+        console.log(`Registration successful: ${data.message}`);
         toast.success("Registration successful", {
-          toastId: "succ-1",
+          toastId: "registration-successful",
         });
         setFormData({
           firstName: "",
@@ -49,6 +50,7 @@ export const RegisterForm = () => {
           email: "",
           password: "",
         });
+        setConfirmPassword("");
       } else {
         const data = await response.json();
         toast.error(data.errors[0].msg);
@@ -123,7 +125,6 @@ export const RegisterForm = () => {
           <button type="submit">Register</button>
         </form>
       </div>
-      {/* <ToastContainer /> */}
     </div>
   );
 };

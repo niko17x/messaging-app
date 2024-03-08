@@ -1,9 +1,10 @@
 import { Hero } from "../components/Hero";
-import { toast } from "react-toastify";
+import { Navbar } from "../components/Navbar";
 
 export const HomePage = () => {
   return (
     <div className="home-page">
+      <Navbar />
       <Hero />
     </div>
   );

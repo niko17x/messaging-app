@@ -97,14 +97,20 @@ button:active {
   }
 }
 
-.register-page {
+.register-page,
+.login-page {
   h1 {
     text-align: center;
     font-size: 3.5rem;
   }
+  p {
+    text-align: center;
+    margin-top: 50px;
+  }
 }
 
-.register-form {
+.register-form,
+.login-form {
   display: grid;
   form {
     display: grid;

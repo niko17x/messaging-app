@@ -13,12 +13,22 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   const { firstName, lastName, username, email, password } = req.body;
-  const userExists = await User.findOne({ email });
+
+  // * email & username are object values & thus can be called by dot notation
+  const userExists = await User.findOne({
+    $or: [{ email }, { username }],
+  });
 
   if (userExists) {
-    return res.status(400).json({
-      message: "User already exists",
-    });
+    if (userExists.email) {
+      return res.status(400).json({
+        message: "Email already exists",
+      });
+    } else if (userExists.username) {
+      return res.status(400).json({
+        message: "Username already exists",
+      });
+    }
   }
 
   const newUser = await User.create({
@@ -49,8 +59,8 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
 
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
@@ -63,7 +73,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(401).json({
-      message: "Invalid email or password",
+      message: "Invalid credentials",
     });
   }
 });
