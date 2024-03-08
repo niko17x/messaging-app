@@ -5,9 +5,11 @@ import { generateToken } from "../utils/generateToken.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
-  console.log(errors);
+
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    const validationErrors = res.status(400).json({ errors: errors.array() });
+    console.log(validationErrors);
+    return validationErrors;
   }
 
   const { firstName, lastName, username, email, password } = req.body;

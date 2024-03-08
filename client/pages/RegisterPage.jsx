@@ -51,9 +51,10 @@ export const RegisterPage = () => {
         });
       } else {
         const data = await response.json();
-        data.errors.forEach((error) => {
-          toast.error(error.msg, { toastId: error.param });
-        });
+        toast.error(data.errors[0].msg);
+        // data.errors.forEach((error) => {
+        //   toast.error(error.msg, { toastId: error.param });
+        // });
       }
     } catch (err) {
       console.error(`Error registering user: ${err.message}`);
