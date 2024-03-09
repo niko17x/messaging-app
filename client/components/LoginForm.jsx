@@ -35,6 +35,7 @@ export const LoginForm = () => {
           username: "",
           password: "",
         });
+        localStorage.setItem("userInfo", JSON.stringify(data.user));
         navigate("/");
       } else {
         const errorMessage = data.errors?.[0]?.msg || "Login failed";

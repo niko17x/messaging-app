@@ -1,3 +1,5 @@
+// Retrieving authenticated user payload from local storage (stored by logging in / registering)
+
 import { useEffect, useState } from "react";
 
 export const useFetchAuthUser = () => {

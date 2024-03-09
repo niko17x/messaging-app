@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
-import { validationResult } from "express-validator";
 import { generateToken } from "../utils/generateToken.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -56,13 +55,16 @@ export const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username });
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
+    const token = generateToken(res, user._id);
     res.status(201).json({
-      _id: user._id,
-      firstname: user.firstName,
-      lastName: user.lastName,
-      username: user.username,
-      email: user.email,
+      token,
+      user: {
+        _id: user._id,
+        firstname: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        email: user.email,
+      },
     });
   } else {
     res.status(401).json({
@@ -82,8 +84,8 @@ export const logoutUser = asyncHandler(async (req, res) => {
   });
 });
 
-export const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+export const updateUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
 
   if (!user) {
     return res.status(404).json({
@@ -112,16 +114,18 @@ export const updateUser = asyncHandler(async (req, res) => {
 });
 
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const user = {
-    _id: req.user._id,
-    firstName: req.user.firstName,
-    lastName: req.user.lastName,
-    username: req.user.username,
-    email: req.user.email,
+  const user = await User.findById(req.params.id);
+
+  const userData = {
+    _id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    email: user.email,
   };
 
   res.status(200).json({
     message: "Successfully retrieved user profile",
-    user,
+    userData,
   });
 });

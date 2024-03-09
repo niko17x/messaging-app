@@ -1,9 +1,19 @@
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 
 export const Header = () => {
-  const [authUser, setAuthUser] = useState(true);
+  const [authUsername, setAuthUsername] = useState("");
+
+  const navigate = useNavigate();
+  const user = useFetchAuthUser();
+
+  useEffect(() => {
+    if (user.username) {
+      setAuthUsername(user.username);
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -14,9 +24,12 @@ export const Header = () => {
         },
       });
       if (response.ok) {
+        setAuthUsername("");
+        localStorage.removeItem("userInfo");
         toast.success("Logout successfull", {
           toastId: "logout-successful",
         });
+        navigate("/");
       }
     } catch (err) {
       console.error(err);
@@ -33,7 +46,12 @@ export const Header = () => {
         />
       </Link>
 
-      {authUser ? <div onClick={handleLogout}>Logout</div> : null}
+      {authUsername ? (
+        <div>
+          <div onClick={() => navigate(`/profile/${user._id}`)}>Profile</div>
+          <div onClick={handleLogout}>Logout</div>
+        </div>
+      ) : null}
     </div>
   );
 };

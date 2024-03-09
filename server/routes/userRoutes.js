@@ -3,12 +3,14 @@ import {
   registerUser,
   loginUser,
   logoutUser,
-  updateUser,
+  updateUserProfile,
   getUserProfile,
 } from "../controllers/userController.js";
+import { protect } from "../middleware/authMiddleware.js";
 import {
   userRegistrationValidations,
   userLoginValidations,
+  userUpdateProfileValidations,
 } from "../validations/userRegistrationValidations.js";
 import { checkValidationErrors } from "../middleware/checkValidationErrors.js";
 
@@ -23,7 +25,10 @@ router.post(
 );
 router.post("/login", userLoginValidations(), checkValidationErrors, loginUser);
 router.post("/logout", logoutUser);
-router.put("/update-user/:id", updateUser);
-router.get("/profile", getUserProfile);
+router.route("/profile/:id").get(getUserProfile).put(
+  // userUpdateProfileValidations(),
+  checkValidationErrors,
+  updateUserProfile
+);
 
 export default router;
