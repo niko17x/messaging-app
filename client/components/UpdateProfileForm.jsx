@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 
 export const UpdateProfileForm = () => {
+  const [isPasswordMatched, setIsPasswordMatched] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formData, setFormData] = useState({
     _id: "",
@@ -18,6 +19,10 @@ export const UpdateProfileForm = () => {
   const user = useParams();
 
   const { firstName, lastName, username, email, password } = formData;
+
+  const handleFormDataChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -48,31 +53,24 @@ export const UpdateProfileForm = () => {
     fetchUserData();
   }, [user]);
 
-  useEffect(() => {
-    console.log(password === undefined);
-  });
-
-  const handleFormDataChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const confirmPasswordsMatch = () => {
-    if (password) {
-      console.log(password, confirmPassword);
-      if (password !== confirmPassword) {
-        toast.error("Passwords do not match", {
-          toastId: "password-match-fail",
-        });
-        return;
-      }
+    if (!password || !confirmPassword) {
+      toast.error(`Missing ${!password ? "password" : "confirm password"}`, {
+        toastId: `password-${!password ? "missing" : "confirm-missing"}-fail`,
+      });
+      return false;
+    } else if (password !== confirmPassword) {
+      toast.error("Passwords do not match", {
+        toastId: "password-match-fail",
+      });
+      setConfirmPassword("");
+      setFormData({ ...formData, password: "" });
+      return false;
     }
+    return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    confirmPasswordsMatch();
-
+  const fetchUpdateProfile = async () => {
     try {
       const response = await fetch(`/api/user/profile/${user.id}`, {
         method: "PUT",
@@ -93,12 +91,20 @@ export const UpdateProfileForm = () => {
           password: data.password || "",
         });
         setConfirmPassword("");
+        toast.success("Profile updated", {
+          toastId: "profile-updated-success",
+        });
       }
-      toast.success("Profile updated", {
-        toastId: "profile-updated-success",
-      });
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (confirmPasswordsMatch()) {
+      await fetchUpdateProfile();
     }
   };
 
