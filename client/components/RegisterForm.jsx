@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export const RegisterForm = () => {
@@ -12,6 +13,7 @@ export const RegisterForm = () => {
   });
 
   const { firstName, lastName, username, email, password } = formData;
+  const navigate = useNavigate();
 
   const handleFormDataChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,6 +53,7 @@ export const RegisterForm = () => {
           password: "",
         });
         setConfirmPassword("");
+        navigate("/");
       } else {
         const data = await response.json();
         toast.error(data.errors[0].msg);

@@ -1,6 +1,10 @@
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 
-export const Navbar = () => {
+export const Header = () => {
+  const [authUser, setAuthUser] = useState(true);
+
   const handleLogout = async () => {
     try {
       const response = await fetch("/api/user/logout", {
@@ -20,9 +24,16 @@ export const Navbar = () => {
   };
 
   return (
-    <div>
-      <h1>Header</h1>
-      <button onClick={handleLogout}>Logout</button>
+    <div className="header">
+      <Link to="/">
+        <img
+          src="../src/assets/images/logo.webp"
+          alt=""
+          className="main-logo"
+        />
+      </Link>
+
+      {authUser ? <div onClick={handleLogout}>Logout</div> : null}
     </div>
   );
 };

@@ -4,14 +4,6 @@ import { validationResult } from "express-validator";
 import { generateToken } from "../utils/generateToken.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    const validationErrors = res.status(400).json({ errors: errors.array() });
-    console.log(validationErrors);
-    return validationErrors;
-  }
-
   const { firstName, lastName, username, email, password } = req.body;
 
   // * email & username are object values & thus can be called by dot notation
@@ -60,6 +52,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
+
   const user = await User.findOne({ username });
 
   if (user && (await user.matchPassword(password))) {

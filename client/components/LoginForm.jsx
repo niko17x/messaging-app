@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export const LoginForm = () => {
@@ -8,26 +9,55 @@ export const LoginForm = () => {
   });
 
   const { username, password } = formData;
+  const navigate = useNavigate();
 
   const handleFormDataChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const fetchUserLoginApi = async () => {
     try {
       const response = await fetch("/api/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(formData),
       });
+
       const data = await response.json();
-      console.log(data);
+
+      if (response.ok) {
+        toast.success("Login successful", {
+          toastId: "login-success",
+        });
+        setFormData({
+          username: "",
+          password: "",
+        });
+        navigate("/");
+      } else {
+        const errorMessage = data.errors?.[0]?.msg || "Login failed";
+        toast.error(errorMessage, {
+          toastId: "credential-empty-error",
+        });
+      }
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!username && !password) {
+      toast.error("Please enter credentials", {
+        toastId: "credentials-empty-error",
+      });
+      return;
+    }
+
+    fetchUserLoginApi();
   };
 
   return (

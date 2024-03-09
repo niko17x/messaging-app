@@ -6,13 +6,22 @@ import {
   updateUser,
   getUserProfile,
 } from "../controllers/userController.js";
-import { userValidations } from "../validations/userValidations.js";
+import {
+  userRegistrationValidations,
+  userLoginValidations,
+} from "../validations/userRegistrationValidations.js";
+import { checkValidationErrors } from "../middleware/checkValidationErrors.js";
 
 const router = express.Router();
 
 // todo: protect these routes once able
-router.post("/register", userValidations(), registerUser);
-router.post("/login", loginUser);
+router.post(
+  "/register",
+  userRegistrationValidations(),
+  checkValidationErrors,
+  registerUser
+);
+router.post("/login", userLoginValidations(), checkValidationErrors, loginUser);
 router.post("/logout", logoutUser);
 router.put("/update-user/:id", updateUser);
 router.get("/profile", getUserProfile);
