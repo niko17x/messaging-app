@@ -48,7 +48,7 @@ export const Header = () => {
 
       {authUsername ? (
         <div>
-          <div onClick={() => navigate(`/profile/${user._id}`)}>Profile</div>
+          <div onClick={() => navigate(`/profile/${user.id}`)}>Profile</div>
           <div onClick={handleLogout}>Logout</div>
         </div>
       ) : null}

@@ -16,7 +16,6 @@ import { checkValidationErrors } from "../middleware/checkValidationErrors.js";
 
 const router = express.Router();
 
-// todo: protect these routes once able
 router.post(
   "/register",
   userRegistrationValidations(),

@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 
 const userSchema = mongoose.Schema(
   {
+    profileImage: {
+      type: String,
+    },
     firstName: {
       type: String,
       trim: true,

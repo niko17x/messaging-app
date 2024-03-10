@@ -1,12 +1,12 @@
 import { Header } from "../components/Header";
-import { UpdateProfileForm } from "../components/UpdateProfileForm";
+import { ProfileForm } from "../components/ProfileForm";
 
 export const ProfilePage = () => {
   return (
-    <div className="user-profile-page">
+    <div className="profile-page">
       <Header />
       <h1>Update Profile</h1>
-      <UpdateProfileForm />
+      <ProfileForm />
     </div>
   );
 };
