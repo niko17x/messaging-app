@@ -87,6 +87,7 @@ export const ProfileForm = () => {
         const data = await response.json();
         setFormData({
           _id: data._id,
+          profileImage: data.profileImage,
           firstName: data.firstName,
           lastName: data.lastName,
           username: data.username,
@@ -111,21 +112,10 @@ export const ProfileForm = () => {
     // }
   };
 
-  const convertToBase64 = (e) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0]);
-    reader.onload = () => {
-      setProfileImage(reader.result);
-    };
-    reader.onerror = (error) => {
-      console.log("Error: ", error);
-    };
-  };
-
   return (
     <div className="center-container">
       <div className="profile-form">
-        <form action="" onSubmit={handleSubmit}>
+        <form action="" onSubmit={handleSubmit} encType="multipart/form-data">
           <img
             src={profileImage || `../src/assets/images/profile-image-icon.png`}
             width={100}
@@ -137,7 +127,6 @@ export const ProfileForm = () => {
               type="file"
               name="profile-picture"
               accept="image/png, image/jpeg, image/webp"
-              onChange={convertToBase64}
             />
           </label>
           <label htmlFor="firstName">
@@ -195,7 +184,7 @@ export const ProfileForm = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </label>
-          <button type="submit">Register</button>
+          <button type="submit">Update</button>
         </form>
       </div>
     </div>

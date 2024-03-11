@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 export const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formData, setFormData] = useState({
-    profileImage: "",
     firstName: "",
     lastName: "",
     username: "",
@@ -13,8 +12,7 @@ export const RegisterForm = () => {
     password: "",
   });
 
-  const { profileImage, firstName, lastName, username, email, password } =
-    formData;
+  const { firstName, lastName, username, email, password } = formData;
   const navigate = useNavigate();
 
   const handleFormDataChange = (e) => {
@@ -70,41 +68,10 @@ export const RegisterForm = () => {
     }
   };
 
-  const convertToBase64 = (e) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0]);
-    reader.onload = () => {
-      setFormData({
-        ...formData,
-        profileImage: reader.result,
-      });
-      console.log(profileImage);
-    };
-    reader.onerror = (error) => {
-      console.log("Error: ", error);
-    };
-  };
-
-  // TODO: WORKING ON ALLOWING USER TO SELECT PHOTO AND ADD TO PROFILE. CURRENTLY ONLY ABLE TO SELECT VERY SMALL IMAGE FILES. FILES ARE SUCCESSFULLY SENT TO SERVER AND STORED IN MONGODB. IMG FILES ARE NOT ABLE TO BE RETRIEVED FROM MONGODB TO SHOW ON UPDATE PROFILE PAGE.
-
   return (
     <div className="center-container">
       <div className="register-form">
         <form action="" onSubmit={handleSubmit}>
-          <img
-            src={profileImage || `../src/assets/images/profile-image-icon.png`}
-            width={100}
-            height={100}
-            alt=""
-          />
-          <label htmlFor="profile-picture">
-            <input
-              type="file"
-              name="profile-picture"
-              accept="*"
-              onChange={convertToBase64}
-            />
-          </label>
           <label htmlFor="firstName">
             <input
               type="text"

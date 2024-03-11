@@ -3,12 +3,7 @@ import User from "../models/userModel.js";
 import { generateToken } from "../utils/generateToken.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
-  console.log("first");
-  const { profileImage, firstName, lastName, username, email, password } =
-    req.body;
-
-  console.log(profileImage);
-  console.log(firstName);
+  const { firstName, lastName, username, email, password } = req.body;
 
   // * email & username are object values & thus can be called by dot notation
   const userExists = await User.findOne({
@@ -28,7 +23,6 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   const newUser = await User.create({
-    profileImage,
     firstName,
     lastName,
     username,
@@ -36,15 +30,12 @@ export const registerUser = asyncHandler(async (req, res) => {
     password,
   });
 
-  console.log(newUser.profileImage);
-
   if (newUser) {
     generateToken(res, newUser._id);
     res.status(201).json({
       message: "User registered successfully",
       user: {
         id: newUser._id,
-        profileImage: newUser.profileImage,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         username: newUser.username,
@@ -102,7 +93,6 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     });
   }
 
-  user.profileImage = req.body.profileImage || user.profileImage;
   user.firstName = req.body.firstName || user.firstName;
   user.lastName = req.body.lastName || user.lastName;
   user.username = req.body.username || user.username;

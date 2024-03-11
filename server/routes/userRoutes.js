@@ -1,4 +1,5 @@
 import express from "express";
+import { protect } from "../middleware/authMiddleware.js";
 import {
   registerUser,
   loginUser,
@@ -6,7 +7,6 @@ import {
   updateUserProfile,
   getUserProfile,
 } from "../controllers/userController.js";
-import { protect } from "../middleware/authMiddleware.js";
 import {
   userRegistrationValidations,
   userLoginValidations,
@@ -24,10 +24,9 @@ router.post(
 );
 router.post("/login", userLoginValidations(), checkValidationErrors, loginUser);
 router.post("/logout", logoutUser);
-router.route("/profile/:id").get(getUserProfile).put(
-  // userUpdateProfileValidations(),
-  checkValidationErrors,
-  updateUserProfile
-);
+router
+  .route("/profile/:id")
+  .get(getUserProfile)
+  .put(checkValidationErrors, updateUserProfile);
 
 export default router;

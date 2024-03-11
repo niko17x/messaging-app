@@ -16,6 +16,7 @@ import "./index.scss";
 import "react-toastify/dist/ReactToastify.css";
 import ErrorPage from "../pages/ErrorPage";
 import { ProfilePage } from "../pages/ProfilePage";
+import { LobbyPage } from "../pages/LobbyPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +25,7 @@ const router = createBrowserRouter(
       <Route index={true} path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/lobby" element={<LobbyPage />} />
       <Route path="/profile/:id" element={<ProfilePage />} />
       <Route path="*" element={<ErrorPage />} />
     </>
