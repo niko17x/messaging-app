@@ -1,1 +1,4 @@
-1. Within react components, an "uncontrolled state error" can populate if trying to setState with an undefined or null data. Make sure data being passed is an actual value or even an empty string.
+* Within react components, an "uncontrolled state error" can populate if trying to setState with an undefined or null data. Make sure data being passed is an actual value or even an empty string.
+
+* 
+

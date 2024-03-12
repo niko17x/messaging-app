@@ -1,26 +1,24 @@
 import mongoose from "mongoose";
 
-const threadSchema = mongoose.Schema(
+export const threadSchema = mongoose.Schema(
   {
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Relationship",
-    },
-    host: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    message: {
-      type: String,
-    },
-    updated: {
-      type: Date,
-      default: Date.now,
-    },
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
-  { timeStamps: true }
+  { timestamps: true }
 );
 
 const Thread = mongoose.model("Thread", threadSchema);
 
 export default Thread;
+
+/**
+ * Thread works as a 'container' for a conversation between 2 different users (or potentially more => group messaging).
+ * Each thread creates a new unique ID which can be referenced to find specific messages.
+ * Specific thread can be found by querying the 2 users in MDB to retrieve the specific ID.
+ * ie: Thread.findOne({participants: {$all: [joanneId, nikoId]}})
+ */
