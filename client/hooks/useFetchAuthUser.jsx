@@ -13,5 +13,5 @@ export const useFetchAuthUser = () => {
     }
   }, []);
 
-  return userData;
+  return { userData };
 };

@@ -6,6 +6,7 @@ import {
   logoutUser,
   updateUserProfile,
   getUserProfile,
+  getUsers,
 } from "../controllers/userController.js";
 import {
   userRegistrationValidations,
@@ -24,6 +25,7 @@ router.post(
 );
 router.post("/login", userLoginValidations(), checkValidationErrors, loginUser);
 router.post("/logout", logoutUser);
+router.get("/users", getUsers);
 router
   .route("/profile/:id")
   .get(getUserProfile)

@@ -1,6 +1,16 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 
 export const Hero = () => {
+  const [user, setUser] = useState(false);
+
+  const { userData } = useFetchAuthUser();
+
+  useEffect(() => {
+    userData ? setUser(true) : setUser(false);
+  }, [userData]);
+
   const navigate = useNavigate();
 
   return (
@@ -15,14 +25,20 @@ export const Hero = () => {
           communication with Thread Connect, where every message bridges hearts
           and builds communities.
         </p>
-        <div className="action-buttons">
-          <button type="button" onClick={() => navigate("/login")}>
-            Login
+        {!user ? (
+          <div className="action-buttons">
+            <button type="button" onClick={() => navigate("/login")}>
+              Login
+            </button>
+            <button type="button" onClick={() => navigate("/register")}>
+              Register
+            </button>
+          </div>
+        ) : (
+          <button type="button" onClick={() => navigate("/lobby")}>
+            Lobby
           </button>
-          <button type="button" onClick={() => navigate("/register")}>
-            Register
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

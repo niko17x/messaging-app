@@ -129,3 +129,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
     userData,
   });
 });
+
+export const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find();
+  res.status(201).json({ users });
+});

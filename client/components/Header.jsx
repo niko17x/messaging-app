@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 
 export const Header = () => {
-  const [authUsername, setAuthUsername] = useState("");
+  const [authUsername, setAuthUsername] = useState();
 
+  const { userData } = useFetchAuthUser();
   const navigate = useNavigate();
-  const user = useFetchAuthUser();
 
   useEffect(() => {
-    if (user.username) {
-      setAuthUsername(user.username);
+    if (userData) {
+      setAuthUsername(userData.username);
     }
-  }, [user]);
+  }, [userData]);
 
   const handleLogout = async () => {
     try {
@@ -48,10 +48,15 @@ export const Header = () => {
 
       {authUsername ? (
         <div>
-          <div onClick={() => navigate(`/profile/${user.id}`)}>Profile</div>
+          <div onClick={() => navigate(`/profile/${userData._id}`)}>
+            Profile
+          </div>
+          <div onClick={() => navigate("/lobby")}>Lobby</div>
           <div onClick={handleLogout}>Logout</div>
         </div>
-      ) : null}
+      ) : (
+        <div onClick={() => navigate("/login")}>Login</div>
+      )}
     </div>
   );
 };
