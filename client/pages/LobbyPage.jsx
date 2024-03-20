@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Header } from "../components/Header";
 import { MessageThreads } from "../components/MessageThreads";
 import { Messenger } from "../components/Messenger";
 import { UsersList } from "../components/UsersList";
 
 export const LobbyPage = () => {
-  const [threadId, setThreadId] = useState();
-  const [selectedUser, setSelectedUser] = useState();
+  const [firstThreadId, setFirstThreadId] = useState("");
+  const [selectedUserData, setSelectedUserData] = useState("");
 
-  const onThreadSelect = (data) => {
-    setThreadId(data);
-  };
+  console.log(firstThreadId.participants);
 
-  const onUserSelect = (data) => {
-    setSelectedUser(data);
+  const onFirstThreadId = useCallback((data) => {
+    setFirstThreadId(data);
+  }, []);
+
+  const onSelectedThreadId = (data) => {
+    setSelectedUserData(data);
   };
 
   return (
@@ -22,10 +24,23 @@ export const LobbyPage = () => {
       <h1>Lobby</h1>
       <div className="chat-zone">
         <div className="chat-zone-left">
-          <UsersList onUserSelect={onUserSelect} />
-          <MessageThreads onThreadSelect={onThreadSelect} />
+          <UsersList onSelectedThreadId={onSelectedThreadId} />
+          <MessageThreads
+            onFirstThreadId={onFirstThreadId}
+            onSelectedThreadId={onSelectedThreadId}
+          />
         </div>
-        <Messenger threadId={threadId} selectedUser={selectedUser} />
+        {firstThreadId || selectedUserData ? (
+          <Messenger
+            firstThreadId={firstThreadId}
+            selectedUserData={selectedUserData}
+          />
+        ) : (
+          <Messenger
+            firstThreadId={firstThreadId}
+            selectedThreadId={selectedUserData}
+          />
+        )}
       </div>
     </div>
   );

@@ -8,9 +8,9 @@ import {
 
 const router = express.Router();
 
-router.post("/create-thread", createThread);
-router.post("/thread/", getThread);
+router.post("/create", createThread);
 router.get("/threads/", getThreads);
-router.delete("/delete-thread/:id", deleteThread);
+router.delete("/delete/:id", deleteThread);
+router.get("/:id", getThread);
 
 export default router;

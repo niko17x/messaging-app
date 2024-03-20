@@ -4,8 +4,14 @@ export const threadSchema = mongoose.Schema(
   {
     participants: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        sender: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        receiver: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
       },
     ],
   },
@@ -13,6 +19,8 @@ export const threadSchema = mongoose.Schema(
 );
 
 const Thread = mongoose.model("Thread", threadSchema);
+
+// create a new Mongoose method to add more people in a thread
 
 export default Thread;
 

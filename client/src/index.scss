@@ -175,6 +175,7 @@ button:active {
     padding: 10px;
     border-radius: 5px;
     overflow-y: auto;
+    min-width: 200px;
     h1 {
       font-size: 1rem;
     }
@@ -191,6 +192,7 @@ button:active {
     padding: 10px;
     border-radius: 5px;
     overflow-y: auto;
+    min-width: 200px;
     h1 {
       font-size: 1rem;
     }
@@ -234,5 +236,13 @@ button:active {
         font-family: inherit;
       }
     }
+  }
+}
+
+.message-threads {
+  .receiver {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }

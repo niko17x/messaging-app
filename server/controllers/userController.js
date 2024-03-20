@@ -5,7 +5,7 @@ import { generateToken } from "../utils/generateToken.js";
 export const registerUser = asyncHandler(async (req, res) => {
   const { firstName, lastName, username, email, password } = req.body;
 
-  // * email & username are object values & thus can be called by dot notation
+  // email & username are object values & thus can be called by dot notation
   const userExists = await User.findOne({
     $or: [{ email }, { username }],
   });

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 
-export const UsersList = ({ onUserSelect }) => {
+export const UsersList = ({ onSelectedThreadId }) => {
   const [listUsers, setListUsers] = useState([]);
   const [authUser, setAuthUser] = useState();
 
@@ -24,7 +24,6 @@ export const UsersList = ({ onUserSelect }) => {
         });
         const data = await response.json();
         if (response.ok) {
-          // console.log("Successfully retrieved all users");
           const updatedListUsers = data.users.filter(
             (user) => user.username !== authUser
           );
@@ -37,12 +36,12 @@ export const UsersList = ({ onUserSelect }) => {
     fetchUsers();
   }, [authUser]);
 
-  const handleClick = (user) => {
-    onUserSelect(user);
+  const handleClick = async (user) => {
+    onSelectedThreadId(user);
   };
 
-  const displayUsers = () => {
-    return (
+  return (
+    <div className="users-list">
       <ul>
         <h1>Users</h1>
         {listUsers.map((user) => (
@@ -57,8 +56,6 @@ export const UsersList = ({ onUserSelect }) => {
           </li>
         ))}
       </ul>
-    );
-  };
-
-  return <div className="users-list">{displayUsers()}</div>;
+    </div>
+  );
 };

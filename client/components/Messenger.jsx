@@ -1,55 +1,37 @@
 import { useEffect, useState } from "react";
 import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
+import { MessengerForm } from "./MessengerForm";
 
-export const Messenger = ({ threadId, selectedUser }) => {
+export const Messenger = ({ firstThreadId, selectedUserData }) => {
   const [sender, setSender] = useState();
   const [receiver, setReceiver] = useState();
+  const [receiverName, setReceiverName] = useState("");
+  const [messages, setMessages] = useState([]);
 
   const { userData } = useFetchAuthUser();
 
-  const messages = [
-    {
-      id: 1,
-      message: "Hey, how is your weekend?",
-    },
-    {
-      id: 2,
-      message: "My weekend was pretty good, thanks.",
-    },
-    {
-      id: 3,
-      message: "Hey, how is your weekend?",
-    },
-    {
-      id: 4,
-      message: "My weekend was pretty good, thanks.",
-    },
-    {
-      id: 5,
-      message: "Hey, how is your weekend?",
-    },
-    {
-      id: 6,
-      message: "My weekend was pretty good, thanks.",
-    },
-  ];
-
   useEffect(() => {
-    if (userData) {
-      setSender(userData._id);
-    }
-  }, [userData]);
+    userData && setSender(userData._id);
+    selectedUserData && setReceiver(selectedUserData._id);
 
-  useEffect(() => {
-    if (selectedUser) {
-      setReceiver(selectedUser._id);
+    if (firstThreadId || selectedUserData) {
+      setReceiver(selectedUserData._id);
+      setReceiverName(
+        selectedUserData
+          ? selectedUserData.username
+          : firstThreadId.participants[0].receiver.username
+      );
     }
-  }, [selectedUser]);
+  }, [userData, selectedUserData, firstThreadId]);
 
-  const fetchThread = async () => {
-    console.log(sender, receiver);
+  const createThread = async () => {
+    if (!sender || !receiver) {
+      console.error("Sender or receiver is not defined.");
+      return;
+    }
+
     try {
-      const response = await fetch("api/thread/thread", {
+      const response = await fetch("/api/thread/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,9 +40,8 @@ export const Messenger = ({ threadId, selectedUser }) => {
       });
 
       const data = await response.json();
-      if (response.ok) {
-        console.log(data.newThread);
-      } else {
+
+      if (!response.ok) {
         console.error(`Failed to fetch or create thread: ${data.message}`);
       }
     } catch (err) {
@@ -68,48 +49,69 @@ export const Messenger = ({ threadId, selectedUser }) => {
     }
   };
 
-  const displayMessage = () => {
-    return messages.map((message, index) => {
-      return (
-        message.id === threadId && (
-          <div key={index}>
-            <div>{message.message}</div>
-          </div>
-        )
-      );
-    });
-  };
+  // const initializeNewChat = () => {
+  //   if (receiverDetail) {
+  //     return (
+  //       <div className="display-message">
+  //         <button type="button" onClick={() => createThread()}>
+  //           {`Start chat with ${receiverDetail}?`}
+  //         </button>
+  //       </div>
+  //     );
+  //   }
+  // };
 
-  const handleClick = () => {
-    fetchThread();
-  };
+  useEffect(() => {
+    // Default messenger load from thread[0]
+    const fetchMessagesFromActiveThread = async () => {
+      if (firstThreadId || selectedUserData) {
+        const activeThreadId = selectedUserData
+          ? selectedUserData._id
+          : firstThreadId._id;
+
+        if (activeThreadId) {
+          try {
+            const response = await fetch(`/api/messages/${activeThreadId}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              setMessages(data.messages);
+            }
+          } catch (err) {
+            console.error(err.message);
+          }
+        } else {
+          return;
+        }
+      }
+    };
+    fetchMessagesFromActiveThread();
+  }, [firstThreadId, selectedUserData]);
 
   return (
     <div className="messenger">
       <div className="header">
-        <span></span>
-        {receiver}
+        {receiverName}
         <img
           src="../src/assets/images/profile-image-icon.png"
           height="30px"
           alt=""
         />
       </div>
-      <div className="display-messages">{displayMessage()}</div>
-      <form action="">
-        <label htmlFor="message">
-          <input type="text" name="message" id="message" />
-        </label>
-        <button type="button">Send</button>
-      </form>
-      <button type="button" onClick={handleClick}>
-        Start Chat
-      </button>
+      <div className="display-messages">
+        {messages.map((message) => (
+          <div key={message._id}>{message.message}</div>
+        ))}
+      </div>
+      <MessengerForm
+        firstThreadId={firstThreadId}
+        selectedUserData={selectedUserData}
+      />
     </div>
   );
 };
-
-/**
- * Retrieve messages from MDB and display in message area.
- * If current thread does not exist between the 2 users, sender can initiate thread by clicking 'Start Chat'.
- */

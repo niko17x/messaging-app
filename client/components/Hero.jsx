@@ -25,7 +25,7 @@ export const Hero = () => {
           communication with Thread Connect, where every message bridges hearts
           and builds communities.
         </p>
-        {!user ? (
+        {user ? (
           <div className="action-buttons">
             <button type="button" onClick={() => navigate("/login")}>
               Login
@@ -35,7 +35,10 @@ export const Hero = () => {
             </button>
           </div>
         ) : (
-          <button type="button" onClick={() => navigate("/lobby")}>
+          <button
+            type="button"
+            onClick={() => navigate(`/lobby/${userData._id}`)}
+          >
             Lobby
           </button>
         )}

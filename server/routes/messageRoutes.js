@@ -2,15 +2,15 @@ import express from "express";
 import {
   createMessage,
   deleteMessage,
+  getMessage,
   getMessages,
-  getMessagesFromUser,
 } from "../controllers/messageController.js";
 
 const router = express.Router();
 
-router.post("/create-message", createMessage);
-router.delete("/delete-message/:id", deleteMessage);
-router.get("/all-messages", getMessages);
-router.get("/all-messages/:id", getMessagesFromUser);
+router.post("/create", createMessage);
+router.delete("/delete/:id", deleteMessage);
+router.get("/:id", getMessages);
+router.get("/:id", getMessage);
 
 export default router;

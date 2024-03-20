@@ -1,4 +1,9 @@
 * Within react components, an "uncontrolled state error" can populate if trying to setState with an undefined or null data. Make sure data being passed is an actual value or even an empty string.
 
-* 
+* Are there any Mongoose methods or statics I can use to simply data retrieval from DB?
 
+
+
+TODO:
+[] Remove user from user list once threads has been created.
+[] Default messages are not showing based on the first thread in Thread list.

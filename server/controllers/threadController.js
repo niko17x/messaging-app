@@ -1,41 +1,67 @@
 import asyncHandler from "express-async-handler";
 import Thread from "../models/threadModel.js";
 
-// POST - create new message
-export const createThread = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "okay" });
+export const getThread = asyncHandler(async (req, res) => {
+  const thread = await Thread.find({
+    "participants.sender": req.params.id,
+  })
+    .populate("participants.sender", "username")
+    .populate("participants.receiver", "username");
+  // .sort({ updatedAt: 1 });
+
+  res.status(200).json({ thread });
 });
 
 // DELETE - delete message
 export const deleteThread = asyncHandler(async (req, res) => {
+  console.log(req.params.id);
+  await Thread.deleteOne({ _id: req.params.id });
+
   res.status(200).json({ message: "message deleted" });
 });
 
-// POST
-export const getThread = asyncHandler(async (req, res) => {
+export const createThread = asyncHandler(async (req, res) => {
   const { sender, receiver } = req.body;
-  console.log(`sender, ${sender}`);
-  console.log(`receiver, ${receiver}`);
+
+  // const existingThread = await Thread.findOne({
+  //   $or: [
+  //     { "participants.sender": sender, "participants.receiver": receiver },
+  //     { "participants.sender": receiver, "participants.receiver": sender }
+  //   ],
+  // });
+
   // Search for selected thread
-  const thread = await Thread.findOne({
-    participants: { $all: [sender, receiver] },
+  const existingThread = await Thread.findOne({
+    participants: {
+      $elemMatch: { sender: sender, receiver: receiver },
+    },
   });
 
   // If thread exists, notify client no need to make a new thread
-  if (thread) {
+  if (existingThread) {
     res
       .status(400)
       .json({ message: "Thread currently exists between these users" });
   } else {
     // If not, create new thread
     const newThread = await Thread.create({
-      participants: [sender, receiver],
+      participants: [{ sender, receiver }],
     });
-    res.status(200).json({ message: "all messages fetched", newThread });
+    res.status(200).json({ newThread });
   }
 });
 
-// GET - retrieve all messages from specific user
 export const getThreads = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "messages from user fetched" });
+  const { sender, receiver } = req.body;
+  const existingThread = await Thread.findOne({
+    participants: {
+      $elemMatch: { sender: sender, receiver: receiver },
+    },
+  });
+
+  if (existingThread) {
+    res.status(200).json({ message: "Thread exists" });
+  } else {
+    res.status(200).json({ message: "Thread does not exist" });
+  }
 });
