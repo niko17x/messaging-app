@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 import { MessengerForm } from "./MessengerForm";
 
-export const Messenger = ({ firstThreadId, selectedUserData }) => {
-  const [sender, setSender] = useState();
-  const [receiver, setReceiver] = useState();
+export const Messenger = ({
+  firstThreadId,
+  selectedUserData,
+  selectedThreadId,
+}) => {
+  const [sender, setSender] = useState("");
+  const [receiver, setReceiver] = useState("");
   const [receiverName, setReceiverName] = useState("");
   const [messages, setMessages] = useState([]);
 
@@ -41,7 +45,9 @@ export const Messenger = ({ firstThreadId, selectedUserData }) => {
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (response.ok) {
+        return data.newThread._id;
+      } else {
         console.error(`Failed to fetch or create thread: ${data.message}`);
       }
     } catch (err) {
@@ -49,24 +55,12 @@ export const Messenger = ({ firstThreadId, selectedUserData }) => {
     }
   };
 
-  // const initializeNewChat = () => {
-  //   if (receiverDetail) {
-  //     return (
-  //       <div className="display-message">
-  //         <button type="button" onClick={() => createThread()}>
-  //           {`Start chat with ${receiverDetail}?`}
-  //         </button>
-  //       </div>
-  //     );
-  //   }
-  // };
-
   useEffect(() => {
-    // Default messenger load from thread[0]
     const fetchMessagesFromActiveThread = async () => {
-      if (firstThreadId || selectedUserData) {
-        const activeThreadId = selectedUserData
-          ? selectedUserData._id
+      // ? Fails to display correct messages b/c firstThreadId is by default, being shown for all users where a thread does not currently exist.
+      if (firstThreadId || selectedThreadId) {
+        const activeThreadId = selectedThreadId
+          ? selectedThreadId
           : firstThreadId._id;
 
         if (activeThreadId) {
@@ -86,12 +80,13 @@ export const Messenger = ({ firstThreadId, selectedUserData }) => {
             console.error(err.message);
           }
         } else {
+          console.log("activeThreadId not found");
           return;
         }
       }
     };
     fetchMessagesFromActiveThread();
-  }, [firstThreadId, selectedUserData]);
+  }, [firstThreadId, selectedThreadId]);
 
   return (
     <div className="messenger">
@@ -111,6 +106,8 @@ export const Messenger = ({ firstThreadId, selectedUserData }) => {
       <MessengerForm
         firstThreadId={firstThreadId}
         selectedUserData={selectedUserData}
+        createThread={createThread}
+        selectedThreadId={selectedThreadId}
       />
     </div>
   );

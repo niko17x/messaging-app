@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-export const MessengerForm = ({ firstThreadId, selectedUserData }) => {
+export const MessengerForm = ({
+  firstThreadId,
+  createThread,
+  selectedThreadId,
+}) => {
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
@@ -11,7 +15,12 @@ export const MessengerForm = ({ firstThreadId, selectedUserData }) => {
       return;
     }
 
-    const activeThreadId = selectedUserData ? selectedUserData : firstThreadId;
+    let activeThreadId = selectedThreadId ? selectedThreadId : firstThreadId;
+
+    if (selectedThreadId === null) {
+      const activeThreadResponse = await createThread();
+      activeThreadId = activeThreadResponse;
+    }
 
     if (!activeThreadId) {
       console.error(`Failed to retrieve activeThreadId: ${activeThreadId}`);
@@ -27,7 +36,7 @@ export const MessengerForm = ({ firstThreadId, selectedUserData }) => {
         body: JSON.stringify({ message, activeThreadId }),
       });
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
     } catch (err) {
       console.error(err.message);
     }

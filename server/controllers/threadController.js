@@ -14,7 +14,6 @@ export const getThread = asyncHandler(async (req, res) => {
 
 // DELETE - delete message
 export const deleteThread = asyncHandler(async (req, res) => {
-  console.log(req.params.id);
   await Thread.deleteOne({ _id: req.params.id });
 
   res.status(200).json({ message: "message deleted" });
@@ -22,13 +21,6 @@ export const deleteThread = asyncHandler(async (req, res) => {
 
 export const createThread = asyncHandler(async (req, res) => {
   const { sender, receiver } = req.body;
-
-  // const existingThread = await Thread.findOne({
-  //   $or: [
-  //     { "participants.sender": sender, "participants.receiver": receiver },
-  //     { "participants.sender": receiver, "participants.receiver": sender }
-  //   ],
-  // });
 
   // Search for selected thread
   const existingThread = await Thread.findOne({
@@ -52,16 +44,19 @@ export const createThread = asyncHandler(async (req, res) => {
 });
 
 export const getThreads = asyncHandler(async (req, res) => {
-  const { sender, receiver } = req.body;
+  const sender = req.query.sender;
+  const receiver = req.query.receiver;
+
   const existingThread = await Thread.findOne({
-    participants: {
-      $elemMatch: { sender: sender, receiver: receiver },
-    },
+    $or: [
+      { "participants.sender": sender, "participants.receiver": receiver },
+      { "participants.sender": receiver, "participants.receiver": sender },
+    ],
   });
 
   if (existingThread) {
-    res.status(200).json({ message: "Thread exists" });
+    res.status(201).json({ existingThread });
   } else {
-    res.status(200).json({ message: "Thread does not exist" });
+    res.status(400).json({ message: "Thread does not exist" });
   }
 });

@@ -1,7 +1,7 @@
 import express from "express";
 import {
   createMessage,
-  deleteMessage,
+  deleteMessages,
   getMessage,
   getMessages,
 } from "../controllers/messageController.js";
@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 router.post("/create", createMessage);
-router.delete("/delete/:id", deleteMessage);
+router.delete("/delete/:id", deleteMessages);
 router.get("/:id", getMessages);
 router.get("/:id", getMessage);
 

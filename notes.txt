@@ -3,7 +3,28 @@
 * Are there any Mongoose methods or statics I can use to simply data retrieval from DB?
 
 
+? Figuring out how to display messages when a user clicks on another user from the user list:
+- There should be some kind of image or symbol by each user where a thread is active.
+- All messages have a 'threadId' that is tied to the thread which contains participants.
+- In order to retrieve all the messages of an existing thread, I need to obtain the threadId.
+- However, currently in the user list, simply clicking on the user doesn't give me access to the threadId.
+- What data can I get from clicking on a user that can result in me getting the threadId?
+- Clicking on a user, I can get access to the receiver ID.
+- I can get the ID of the currently active user (sender) as well.
+- Now I have access to the receiver and sender ID which is stored in each threadId.
+- I can make a query search in the server to retrieve the first thread that results in both sender and receiver in the participant fieldname.
+- Get the results and dislay them.
 
-TODO:
-[] Remove user from user list once threads has been created.
-[] Default messages are not showing based on the first thread in Thread list.
+? Displaying all the messages that have the same threadId obtained by querying the participants:
+- Now I have access to the threadId by previously searching the Thread model using the sender and receiver ID data.
+- With this data, I can now query the Message model to find all the messages with the threadId.
+- Implement a useEffect to load the messages onto the Messenger page for display.
+
+? Why is it that when trying to initiate a message with a new user, the message that is submitted gets placed in another user thread?
+- A new thread gets created when user initiates a message with a user for the first time.
+- Right now, when trying to create a new thread by way of new message, all the messages have the same threadId for the single existing thread instead of creating new thread.
+- I need to fix this by making sure 
+
+? Deleting all related messages when thread gets deleted:
+- All messages are tied together by a single threadId.
+- Using this threadId, I can make a server request to delete all messages within that thread.
