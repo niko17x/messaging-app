@@ -11,8 +11,13 @@ export const Messenger = ({
   const [receiver, setReceiver] = useState("");
   const [receiverName, setReceiverName] = useState("");
   const [messages, setMessages] = useState([]);
+  const [messengerFormData, setMessengerFormData] = useState("");
 
   const { userData } = useFetchAuthUser();
+
+  const onMessengerFormData = (data) => {
+    setMessengerFormData(data);
+  };
 
   useEffect(() => {
     userData && setSender(userData._id);
@@ -86,7 +91,9 @@ export const Messenger = ({
       }
     };
     fetchMessagesFromActiveThread();
-  }, [firstThreadId, selectedThreadId]);
+  }, [firstThreadId, selectedThreadId, messengerFormData]);
+
+  console.log("messenger");
 
   return (
     <div className="messenger">
@@ -108,6 +115,7 @@ export const Messenger = ({
         selectedUserData={selectedUserData}
         createThread={createThread}
         selectedThreadId={selectedThreadId}
+        onMessengerFormData={onMessengerFormData}
       />
     </div>
   );

@@ -51,7 +51,8 @@ export const Header = () => {
           <div onClick={() => navigate(`/profile/${userData._id}`)}>
             Profile
           </div>
-          <div onClick={() => navigate(`/lobby/${userData._id}`)}>Lobby</div>
+          {/* <div onClick={() => navigate(`/lobby/${userData._id}`)}>Lobby</div> */}
+          <div onClick={() => navigate(`/chat/${userData._id}`)}>Chat</div>
           <div onClick={handleLogout}>Logout</div>
         </div>
       ) : (

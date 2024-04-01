@@ -62,11 +62,12 @@ export const UsersList = ({ onSelectedUserData, onSelectedThreadId }) => {
           onSelectedThreadId(null);
         }
       } catch (err) {
-        // console.log(err.message);
         console.warn(err.message);
       }
     }
   };
+
+  console.log("usersList");
 
   return (
     <div className="users-list">

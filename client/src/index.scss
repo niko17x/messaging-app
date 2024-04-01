@@ -240,9 +240,7 @@ button:active {
 }
 
 .message-threads {
+  // display: grid;
   .receiver {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 }

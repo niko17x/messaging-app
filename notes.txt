@@ -28,3 +28,7 @@
 ? Deleting all related messages when thread gets deleted:
 - All messages are tied together by a single threadId.
 - Using this threadId, I can make a server request to delete all messages within that thread.
+
+? How can I render the page when a new thread is created?
+- The issue is that we have 2 lateral components where messageThreads.jsx is displaying the threads by mapping over the data.
+- Goal: Move all state setters to Lobby.jsx to prevent unnecessary renders and prop drilling.

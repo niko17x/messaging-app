@@ -4,8 +4,31 @@ export const MessengerForm = ({
   firstThreadId,
   createThread,
   selectedThreadId,
+  onMessengerFormData,
 }) => {
   const [message, setMessage] = useState("");
+
+  const createMessage = async (activeThreadId) => {
+    try {
+      const response = await fetch("/api/messages/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message, activeThreadId }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setMessage("");
+        onMessengerFormData(data);
+        console.log(`Message successfuly created: ${data.message}`);
+      } else {
+        console.error(`Message failed to create: ${data.message}`);
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,19 +50,7 @@ export const MessengerForm = ({
       return;
     }
 
-    try {
-      const response = await fetch("/api/messages/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message, activeThreadId }),
-      });
-      const data = await response.json();
-      // console.log(data);
-    } catch (err) {
-      console.error(err.message);
-    }
+    createMessage(activeThreadId);
   };
 
   return (

@@ -1,25 +1,55 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Header } from "../components/Header";
 import { MessageThreads } from "../components/MessageThreads";
 import { Messenger } from "../components/Messenger";
 import { UsersList } from "../components/UsersList";
+import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 
 export const LobbyPage = () => {
   const [firstThreadId, setFirstThreadId] = useState("");
   const [selectedUserData, setSelectedUserData] = useState("");
   const [selectedThreadId, setSelectedThreadId] = useState("");
 
-  const onFirstThreadId = useCallback((data) => {
-    setFirstThreadId(data);
+  // working on this first
+
+  const [threads, setThreads] = useState([]);
+
+  const { userData } = useFetchAuthUser();
+
+  useEffect(() => {
+    const fetchThread = async () => {
+      if (userData) {
+        try {
+          const response = await fetch(`/api/thread/${userData._id}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+
+          if (response.ok && data.thread) {
+            setThreads(data.thread);
+            setFirstThreadId(data.thread[0]);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+
+    fetchThread();
+  }, [userData]);
+
+  const onSelectedUserData = useCallback((data) => {
+    setSelectedUserData(data);
   }, []);
 
-  const onSelectedUserData = (data) => {
-    setSelectedUserData(data);
-  };
-
-  const onSelectedThreadId = (data) => {
+  const onSelectedThreadId = useCallback((data) => {
     setSelectedThreadId(data);
-  };
+  }, []);
+
+  console.log("lobbypage");
 
   return (
     <div className="lobby-page">
@@ -29,25 +59,20 @@ export const LobbyPage = () => {
         <div className="chat-zone-left">
           <UsersList
             onSelectedUserData={onSelectedUserData}
-            // onExistingThreadId={onExistingThreadId}
             onSelectedThreadId={onSelectedThreadId}
           />
           <MessageThreads
-            onFirstThreadId={onFirstThreadId}
+            threads={threads}
             onSelectedUserData={onSelectedUserData}
             onSelectedThreadId={onSelectedThreadId}
+            firstThreadId={firstThreadId}
           />
         </div>
-        {firstThreadId || selectedUserData ? (
+        {(firstThreadId || selectedUserData) && (
           <Messenger
             firstThreadId={firstThreadId}
             selectedUserData={selectedUserData}
             selectedThreadId={selectedThreadId}
-          />
-        ) : (
-          <Messenger
-            firstThreadId={firstThreadId}
-            selectedThreadId={selectedUserData}
           />
         )}
       </div>

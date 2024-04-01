@@ -2,14 +2,31 @@ import asyncHandler from "express-async-handler";
 import Thread from "../models/threadModel.js";
 
 export const getThread = asyncHandler(async (req, res) => {
-  const thread = await Thread.find({
-    "participants.sender": req.params.id,
-  })
-    .populate("participants.sender", "username")
-    .populate("participants.receiver", "username");
-  // .sort({ updatedAt: 1 });
+  // const thread = await Thread.find({
+  //   "participants.sender": req.params.id,
+  // })
+  //   .populate("participants.sender", "username")
+  //   .populate("participants.receiver", "username");
+  // // .sort({ updatedAt: 1 });
 
   res.status(200).json({ thread });
+});
+
+export const getThreads = asyncHandler(async (req, res) => {
+  const sender = req.params.id;
+
+  const existingThread = await Thread.find({
+    $or: [
+      { "participants.sender": sender },
+      { "participants.receiver": sender },
+    ],
+  }).populate("participants.receiver", "username");
+
+  if (existingThread) {
+    res.status(201).json({ existingThread });
+  } else {
+    res.status(400).json({ message: "Thread does not exist" });
+  }
 });
 
 // DELETE - delete message
@@ -35,7 +52,6 @@ export const createThread = asyncHandler(async (req, res) => {
       .status(400)
       .json({ message: "Thread currently exists between these users" });
   } else {
-    // If not, create new thread
     const newThread = await Thread.create({
       participants: [{ sender, receiver }],
     });
@@ -43,20 +59,17 @@ export const createThread = asyncHandler(async (req, res) => {
   }
 });
 
-export const getThreads = asyncHandler(async (req, res) => {
-  const sender = req.query.sender;
-  const receiver = req.query.receiver;
+export const getFirstThread = asyncHandler(async (req, res) => {
+  const firstThread = await Thread.findOne({
+    "participants.sender": req.params.id,
+  })
+    .populate("participants.sender", "username")
+    .populate("participants.receiver", "username")
+    .sort({ updatedAt: 1 });
 
-  const existingThread = await Thread.findOne({
-    $or: [
-      { "participants.sender": sender, "participants.receiver": receiver },
-      { "participants.sender": receiver, "participants.receiver": sender },
-    ],
-  });
-
-  if (existingThread) {
-    res.status(201).json({ existingThread });
+  if (firstThread) {
+    res.status(201).json({ firstThread });
   } else {
-    res.status(400).json({ message: "Thread does not exist" });
+    res.status(401).json({ message: "First thread not found" });
   }
 });
