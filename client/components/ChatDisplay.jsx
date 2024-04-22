@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import { ChatFunctions } from "./ChatFunctions";
+import { ChatContext } from "../pages/ChatPage";
 
 export const ChatDisplay = () => {
+  const { chatMessages } = useContext(ChatContext);
+
   return (
     <div className="messenger">
       <div className="header">
@@ -10,7 +14,11 @@ export const ChatDisplay = () => {
           alt=""
         />
       </div>
-      <div className="display-messages"></div>
+      <div className="display-messages">
+        {chatMessages.map((message) => {
+          return <li key={message._id}>{message.message}</li>;
+        })}
+      </div>
       <ChatFunctions />
     </div>
   );

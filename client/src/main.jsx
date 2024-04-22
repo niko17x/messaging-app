@@ -38,17 +38,17 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
 
-  root.render(
-    <div>
-      <RouterProvider router={router} />,
-      <ToastContainer />
-    </div>
-  );
-
   // root.render(
-  //   <React.StrictMode>
-  //     <RouterProvider router={router} />
+  //   <div>
+  //     <RouterProvider router={router} />,
   //     <ToastContainer />
-  //   </React.StrictMode>
+  //   </div>
   // );
+
+  root.render(
+    <React.StrictMode>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </React.StrictMode>
+  );
 }

@@ -33,7 +33,7 @@ export const getThreads = asyncHandler(async (req, res) => {
 export const deleteThread = asyncHandler(async (req, res) => {
   await Thread.deleteOne({ _id: req.params.id });
 
-  res.status(200).json({ message: "message deleted" });
+  res.status(200).json({ message: "Thread successfully deleted" });
 });
 
 export const createThread = asyncHandler(async (req, res) => {

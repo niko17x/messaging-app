@@ -1,17 +1,23 @@
-import { useContext, useEffect, useState } from "react";
-import { ThreadContext, UserContext } from "../pages/ChatPage";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ChatContext, ThreadContext, UserContext } from "../pages/ChatPage";
 import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
+import { toast } from "react-toastify";
 
 export const ChatFunctions = () => {
   const [message, setMessage] = useState("");
-  const [localExistingThreads, setLocalExistingThreads] = useState([]);
+  const localThreadId = useRef(null);
 
-  const { selectedUserData, selectedReceiverId } = useContext(UserContext);
-  const { setExistingThreads, selectedThread } = useContext(ThreadContext);
+  const { selectedUserData } = useContext(UserContext);
+  const {
+    selectedThread,
+    setRenderedNewThread,
+    defaultThreadId,
+    existingThreads,
+  } = useContext(ThreadContext);
+  const { setMessageCreated } = useContext(ChatContext);
 
   const { userData } = useFetchAuthUser();
 
-  // new thread should be created after user sends first message
   const createNewThread = async () => {
     try {
       if (userData && selectedUserData) {
@@ -29,9 +35,11 @@ export const ChatFunctions = () => {
         const data = await response.json();
 
         if (response.ok) {
-          console.info(`${data.message}`);
+          console.log("Thread successfully created");
+          setRenderedNewThread(true);
+          localThreadId.current = data.newThread._id;
         } else {
-          console.error(`${data.message}`);
+          console.error(`${response.message}`);
         }
       } else {
         console.log(
@@ -51,59 +59,33 @@ export const ChatFunctions = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          threadId: selectedThread ? selectedThread._id : null,
+          activeThreadId: selectedThread
+            ? selectedThread._id
+            : localThreadId.current
+            ? localThreadId.current
+            : defaultThreadId,
           message,
         }),
       });
 
       const data = await response.json();
-      console.log(data);
+
+      if (response.ok) {
+        console.log("Message successfully created");
+        setMessageCreated((prev) => !prev);
+        setMessage("");
+      } else {
+        console.log(`Message failed to create: ${data.message}`);
+      }
     } catch (err) {
       console.error(`${err.message}`);
     }
   };
 
-  useEffect(() => {
-    // fetch all threads
-    const fetchAllThreads = async () => {
-      if (userData._id) {
-        try {
-          const response = await fetch(
-            `/api/thread/all-threads/${userData._id}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const data = await response.json();
-
-          if (response.ok) {
-            const newThreads = data.existingThread;
-
-            setExistingThreads((prevThreads) =>
-              JSON.stringify(prevThreads) === JSON.stringify(newThreads)
-                ? prevThreads
-                : newThreads
-            );
-            setLocalExistingThreads(newThreads);
-          } else {
-            console.error(`${data.message}`);
-          }
-        } catch (err) {
-          console.error(`${err.message}`);
-        }
-      }
-    };
-    fetchAllThreads();
-  }, [userData, setExistingThreads]);
-
-  const validateThreadExists = () => {
+  const isThreadExists = () => {
     let threadExists = false;
     if (selectedUserData) {
-      localExistingThreads.forEach((thread) => {
+      existingThreads.forEach((thread) => {
         const participantFound = thread.participants.find(
           (participant) => participant.receiver._id === selectedUserData._id
         );
@@ -111,20 +93,28 @@ export const ChatFunctions = () => {
           threadExists = true;
         }
       });
+    } else {
+      threadExists = true;
     }
     return threadExists;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateThreadExists()) {
-      createNewThread();
-      createNewMessage();
-      console.log("first");
+    // Return if there is no thread at all or a user has not been selected
+    if (!defaultThreadId && !selectedUserData) {
+      toast.error("Select a user to message", {
+        toastId: "select-a-user-to-message",
+      });
+      return;
+    }
+
+    if (!isThreadExists()) {
+      await createNewThread();
+      await createNewMessage();
     } else {
-      createNewMessage();
-      console.log("second");
+      await createNewMessage();
     }
   };
 
@@ -135,6 +125,7 @@ export const ChatFunctions = () => {
           type="text"
           name="message"
           id="message"
+          value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
       </label>

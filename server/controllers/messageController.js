@@ -5,6 +5,8 @@ import Message from "../models/messageModel.js";
 export const createMessage = asyncHandler(async (req, res) => {
   const { message, activeThreadId } = req.body;
 
+  console.log(activeThreadId);
+
   if (!message) {
     return res.status(400).json({ message: "Message input is empty" });
   }
@@ -30,15 +32,18 @@ export const createMessage = asyncHandler(async (req, res) => {
 export const deleteMessages = asyncHandler(async (req, res) => {
   const messages = await Message.deleteMany({ threadId: req.params.id });
 
-  res.status(200).json({ messages });
+  if (!messages) {
+    res
+      .status(404)
+      .json({ message: "Failed to delete messages - messages not found" });
+  } else {
+    res.status(200).json({ messages });
+  }
 });
 
 // GET - retrieve all messages from specific sender and receiver
 export const getMessages = asyncHandler(async (req, res) => {
-  console.log(req.params.id);
   const messages = await Message.find({ threadId: req.params.id });
-
-  console.log(messages);
 
   if (!messages) {
     res.status(400).json({ message: "Failed to fetch messages" });

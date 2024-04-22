@@ -1,34 +1,8 @@
-* Within react components, an "uncontrolled state error" can populate if trying to setState with an undefined or null data. Make sure data being passed is an actual value or even an empty string.
+*** WHAT IS THE PROCESS OF CREATING A NEW THREAD?
+* Creating a new thread involves clicking on a user then clicking on the 'send' button. 
+* Once the send button is clicked, we attempt to create a new thread.
+* If the thread already exists (checked by server), then it rejects the new thread creation.
 
-* Are there any Mongoose methods or statics I can use to simply data retrieval from DB?
 
-
-? Figuring out how to display messages when a user clicks on another user from the user list:
-- There should be some kind of image or symbol by each user where a thread is active.
-- All messages have a 'threadId' that is tied to the thread which contains participants.
-- In order to retrieve all the messages of an existing thread, I need to obtain the threadId.
-- However, currently in the user list, simply clicking on the user doesn't give me access to the threadId.
-- What data can I get from clicking on a user that can result in me getting the threadId?
-- Clicking on a user, I can get access to the receiver ID.
-- I can get the ID of the currently active user (sender) as well.
-- Now I have access to the receiver and sender ID which is stored in each threadId.
-- I can make a query search in the server to retrieve the first thread that results in both sender and receiver in the participant fieldname.
-- Get the results and dislay them.
-
-? Displaying all the messages that have the same threadId obtained by querying the participants:
-- Now I have access to the threadId by previously searching the Thread model using the sender and receiver ID data.
-- With this data, I can now query the Message model to find all the messages with the threadId.
-- Implement a useEffect to load the messages onto the Messenger page for display.
-
-? Why is it that when trying to initiate a message with a new user, the message that is submitted gets placed in another user thread?
-- A new thread gets created when user initiates a message with a user for the first time.
-- Right now, when trying to create a new thread by way of new message, all the messages have the same threadId for the single existing thread instead of creating new thread.
-- I need to fix this by making sure 
-
-? Deleting all related messages when thread gets deleted:
-- All messages are tied together by a single threadId.
-- Using this threadId, I can make a server request to delete all messages within that thread.
-
-? How can I render the page when a new thread is created?
-- The issue is that we have 2 lateral components where messageThreads.jsx is displaying the threads by mapping over the data.
-- Goal: Move all state setters to Lobby.jsx to prevent unnecessary renders and prop drilling.
+Todo:
+Selecting a user should do a server check to see if a thread exists. If yes, the thread messages should be displayed. If not, messenger should be blank to indicate there is no shared messages.
