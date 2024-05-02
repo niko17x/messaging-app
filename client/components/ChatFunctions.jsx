@@ -13,8 +13,9 @@ export const ChatFunctions = () => {
     setRenderedNewThread,
     defaultThreadId,
     existingThreads,
+    setNewlyCreatedThreadId,
   } = useContext(ThreadContext);
-  const { setMessageCreated } = useContext(ChatContext);
+  const { setMessageCreated, setIsUserFocused } = useContext(ChatContext);
 
   const { userData } = useFetchAuthUser();
 
@@ -38,6 +39,8 @@ export const ChatFunctions = () => {
           console.log("Thread successfully created");
           setRenderedNewThread(true);
           localThreadId.current = data.newThread._id;
+          // store data.newThread._id in state to hold value of newly created thread;
+          setNewlyCreatedThreadId(data.newThread._id);
         } else {
           console.error(`${response.message}`);
         }
@@ -52,6 +55,12 @@ export const ChatFunctions = () => {
   };
 
   const createNewMessage = async () => {
+    const activeThreadId = selectedThread
+      ? selectedThread._id
+      : localThreadId.current
+      ? localThreadId.current
+      : defaultThreadId;
+
     try {
       const response = await fetch("/api/messages/create", {
         method: "POST",
@@ -59,11 +68,7 @@ export const ChatFunctions = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          activeThreadId: selectedThread
-            ? selectedThread._id
-            : localThreadId.current
-            ? localThreadId.current
-            : defaultThreadId,
+          activeThreadId,
           message,
         }),
       });
@@ -113,6 +118,7 @@ export const ChatFunctions = () => {
     if (!isThreadExists()) {
       await createNewThread();
       await createNewMessage();
+      setIsUserFocused(false);
     } else {
       await createNewMessage();
     }

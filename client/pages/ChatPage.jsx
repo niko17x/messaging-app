@@ -15,6 +15,7 @@ export const ChatPage = () => {
   const [selectedReceiverId, setSelectedRecieverId] = useState(null);
   const [existingThreads, setExistingThreads] = useState([]);
   const [selectedThread, setSelectedThread] = useState(null);
+  const [newlyCreatedThreadId, setNewlyCreatedThreadId] = useState("");
   const [renderedNewThread, setRenderedNewThread] = useState("");
   const [defaultThreadId, setDefaultThreadId] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
@@ -22,6 +23,10 @@ export const ChatPage = () => {
   const [isUserFocused, setIsUserFocused] = useState(null);
 
   const { userData } = useFetchAuthUser();
+
+  // * Splitting context based on heavily re-rendered data can improve optimization. Note that any update to the context value will re-render all consumers *
+
+  // TODO: FOCUSING ON USER (THAT DOES NOT HAVE AN ACTIVE THREAD) SHOULD DISPLAY AN BLANK CHAT BOX AS NO THREAD CURRENTLY EXISTS. CURRENTLY FOCUSING ON A USER CONTINUES TO DISPLAY THE MESSAGES OF THE LAST FOCUSED ACTIVE THREAD INSTEAD OF AN EMPTY CHAT BOX.
 
   const users = useMemo(
     () => ({
@@ -43,8 +48,16 @@ export const ChatPage = () => {
       renderedNewThread,
       setRenderedNewThread,
       defaultThreadId,
+      newlyCreatedThreadId,
+      setNewlyCreatedThreadId,
     }),
-    [existingThreads, selectedThread, renderedNewThread, defaultThreadId]
+    [
+      existingThreads,
+      selectedThread,
+      renderedNewThread,
+      defaultThreadId,
+      newlyCreatedThreadId,
+    ]
   );
 
   const chatData = useMemo(
@@ -56,8 +69,6 @@ export const ChatPage = () => {
     }),
     [chatMessages, isUserFocused]
   );
-
-  console.log(isUserFocused);
 
   useEffect(() => {
     setRenderedNewThread(false);

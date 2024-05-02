@@ -8,7 +8,8 @@ export const UsersRegistry = () => {
   const [updatedFetchedUsers, setUpdatedFetchedUsers] = useState([]);
 
   const { fetchedUsers, setSelectedUserData } = useContext(UserContext);
-  const { renderedNewThread, existingThreads } = useContext(ThreadContext);
+  const { renderedNewThread, existingThreads, setSelectedThread } =
+    useContext(ThreadContext);
   const { setIsUserFocused, isUserFocused } = useContext(ChatContext);
 
   const { userData } = useFetchAuthUser();
@@ -28,8 +29,9 @@ export const UsersRegistry = () => {
       setSelectedUserData(data);
       setIsUserFocused(true);
       setFocusedUser(data._id);
+      setSelectedThread(null);
     },
-    [setSelectedUserData, setIsUserFocused]
+    [setSelectedUserData, setIsUserFocused, setSelectedThread]
   );
 
   useEffect(() => {

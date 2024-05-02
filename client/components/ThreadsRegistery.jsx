@@ -6,15 +6,21 @@ export const ThreadsRegistery = () => {
   const [focusedThreadId, setFocusedThreadId] = useState("");
 
   const { setSelectedRecieverId } = useContext(UserContext);
-  const { existingThreads, setSelectedThread, setRenderedNewThread } =
-    useContext(ThreadContext);
   const { isUserFocused, setIsUserFocused } = useContext(ChatContext);
+  const {
+    existingThreads,
+    setSelectedThread,
+    setRenderedNewThread,
+    newlyCreatedThreadId,
+    setNewlyCreatedThreadId,
+  } = useContext(ThreadContext);
 
   const handleClick = (selectedThread, participant) => {
     setSelectedRecieverId(participant.receiver._id);
     setSelectedThread(selectedThread);
     setFocusedThreadId(selectedThread._id);
     isUserFocused && setIsUserFocused(false);
+    setNewlyCreatedThreadId("");
   };
 
   const displayIfNoThreads = () => {
@@ -25,7 +31,6 @@ export const ThreadsRegistery = () => {
     );
   };
 
-  // todo: when deleting thread/messages, I am getting an error from server
   const deleteThread = useCallback(
     async (threadId) => {
       try {
@@ -54,8 +59,13 @@ export const ThreadsRegistery = () => {
   );
 
   const deleteMessages = async (threadId) => {
+    if (!threadId) {
+      console.log("ThreadId not found while trying to delete messages");
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/messages/${threadId}`, {
+      const response = await fetch(`/api/messages/delete/${threadId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -70,11 +80,30 @@ export const ThreadsRegistery = () => {
     }
   };
 
-  // Todo: Revised how to handle deleting thread/messages by using useEffect to trigger deletion based on the state confirmedThreadDeleted but currently doing nothing when being invoked.
-
   const handleDelete = (threadId) => {
     deleteThread(threadId);
     deleteMessages(threadId);
+  };
+
+  const focusDefaultThread = (thread) => {
+    // focus on the newly created thread
+    if (newlyCreatedThreadId) {
+      return thread._id === newlyCreatedThreadId
+        ? "user-selection receiver"
+        : "receiver";
+    }
+
+    // focus the first item in the thread list when there is no focus and user is not focused
+    if (!focusedThreadId && !isUserFocused) {
+      return existingThreads[0]._id === thread._id
+        ? "user-selection receiver"
+        : "receiver";
+    }
+
+    // default focus behavior when user in user list is not focused
+    return focusedThreadId === thread._id && !isUserFocused
+      ? "user-selection receiver"
+      : "receiver";
   };
 
   return (
@@ -85,11 +114,8 @@ export const ThreadsRegistery = () => {
             threads.participants.map((participant) => (
               <ul
                 key={threads._id}
-                className={
-                  focusedThreadId === threads._id && !isUserFocused
-                    ? "user-selection receiver"
-                    : "receiver"
-                }
+                // display visual que when threads match & user is not in focus (prevent focusing on user & thread same time)
+                className={focusDefaultThread(threads)}
                 onClick={() => handleClick(threads, participant)}
               >
                 <li>{participant.receiver.username}</li>

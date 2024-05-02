@@ -30,7 +30,9 @@ export const createMessage = asyncHandler(async (req, res) => {
 });
 
 export const deleteMessages = asyncHandler(async (req, res) => {
+  console.log("first");
   const messages = await Message.deleteMany({ threadId: req.params.id });
+  console.log(req.params.id);
 
   if (!messages) {
     res
