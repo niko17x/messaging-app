@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { ChatContext, ThreadContext, UserContext } from "../pages/ChatPage";
 import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 import { toast } from "react-toastify";
@@ -7,7 +7,7 @@ export const ChatFunctions = () => {
   const [message, setMessage] = useState("");
   const localThreadId = useRef(null);
 
-  const { selectedUserData } = useContext(UserContext);
+  const { selectedUserData, setSelectedUserData } = useContext(UserContext);
   const {
     selectedThread,
     setRenderedNewThread,
@@ -41,6 +41,7 @@ export const ChatFunctions = () => {
           localThreadId.current = data.newThread._id;
           // store data.newThread._id in state to hold value of newly created thread;
           setNewlyCreatedThreadId(data.newThread._id);
+          setSelectedUserData("");
         } else {
           console.error(`${response.message}`);
         }

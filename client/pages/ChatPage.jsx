@@ -140,11 +140,19 @@ export const ChatPage = () => {
       }
     };
     fetchAllThreads();
-  }, [userData, setExistingThreads, renderedNewThread]);
+  }, [userData, setExistingThreads, renderedNewThread, messageCreated]);
 
   // fetch all messages
   useEffect(() => {
-    const threadId = selectedThread ? selectedThread._id : defaultThreadId;
+    let threadId;
+
+    if (newlyCreatedThreadId) {
+      threadId = newlyCreatedThreadId;
+    } else if (selectedThread) {
+      threadId = selectedThread._id;
+    } else {
+      threadId = defaultThreadId;
+    }
 
     const fetchAllMessages = async () => {
       try {
@@ -166,7 +174,7 @@ export const ChatPage = () => {
       }
     };
     threadId && fetchAllMessages();
-  }, [defaultThreadId, selectedThread, messageCreated]);
+  }, [defaultThreadId, selectedThread, messageCreated, newlyCreatedThreadId]);
 
   // console.log("ChatPage");
   return (

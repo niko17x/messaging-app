@@ -1,24 +1,29 @@
 import { useContext } from "react";
 import { ChatFunctions } from "./ChatFunctions";
-import { ChatContext } from "../pages/ChatPage";
+import { ChatContext, UserContext } from "../pages/ChatPage";
 
 export const ChatDisplay = () => {
   const { chatMessages } = useContext(ChatContext);
+  const { selectedUserData } = useContext(UserContext);
+
+  // when new thread gets created, display new thread using new thread ID
+
+  // display empty chat screen when focusing on a user from user list
+  const displayEmptyChatScreen = () => {
+    return selectedUserData ? (
+      <div className="send-message-intro">
+        Send a message to start a new thread with {selectedUserData.firstName}!
+      </div>
+    ) : (
+      chatMessages.map((message) => {
+        return <li key={message._id}>{message.message}</li>;
+      })
+    );
+  };
 
   return (
     <div className="messenger">
-      <div className="header">
-        <img
-          src="../src/assets/images/profile-image-icon.png"
-          height="30px"
-          alt=""
-        />
-      </div>
-      <div className="display-messages">
-        {chatMessages.map((message) => {
-          return <li key={message._id}>{message.message}</li>;
-        })}
-      </div>
+      <div className="display-messages">{displayEmptyChatScreen()}</div>
       <ChatFunctions />
     </div>
   );

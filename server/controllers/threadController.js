@@ -20,16 +20,17 @@ export const getThreads = asyncHandler(async (req, res) => {
       { "participants.sender": sender },
       { "participants.receiver": sender },
     ],
-  }).populate("participants.receiver", "username");
+  })
+    .populate("participants.receiver", "username")
+    .sort({ updatedAt: -1 });
 
-  if (existingThread) {
-    res.status(201).json({ existingThread });
+  if (existingThread.length > 0) {
+    res.status(200).json({ existingThread });
   } else {
-    res.status(400).json({ message: "Thread does not exist" });
+    res.status(404).json({ message: "Thread does not exist" });
   }
 });
 
-// DELETE - delete message
 export const deleteThread = asyncHandler(async (req, res) => {
   await Thread.deleteOne({ _id: req.params.id });
 

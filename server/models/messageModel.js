@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Thread from "../models/threadModel.js";
 
 const messageSchema = mongoose.Schema(
   {
@@ -12,6 +13,18 @@ const messageSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+messageSchema.post("save", async function (doc, next) {
+  try {
+    await Thread.findByIdAndUpdate(doc.threadId, {
+      $set: { updatedAt: new Date() },
+    });
+  } catch (error) {
+    console.error("Error updating thread timestamp:", error);
+    next(error);
+  }
+  next();
+});
 
 const Message = mongoose.model("Message", messageSchema);
 

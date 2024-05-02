@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 export const ThreadsRegistery = () => {
   const [focusedThreadId, setFocusedThreadId] = useState("");
 
-  const { setSelectedRecieverId } = useContext(UserContext);
+  const { setSelectedRecieverId, setSelectedUserData } =
+    useContext(UserContext);
   const { isUserFocused, setIsUserFocused } = useContext(ChatContext);
   const {
     existingThreads,
@@ -21,6 +22,7 @@ export const ThreadsRegistery = () => {
     setFocusedThreadId(selectedThread._id);
     isUserFocused && setIsUserFocused(false);
     setNewlyCreatedThreadId("");
+    setSelectedUserData("");
   };
 
   const displayIfNoThreads = () => {
