@@ -22,6 +22,7 @@ export const getThreads = asyncHandler(async (req, res) => {
     ],
   })
     .populate("participants.receiver", "username")
+    .populate("participants.sender", "username")
     .sort({ updatedAt: -1 });
 
   if (existingThread.length > 0) {

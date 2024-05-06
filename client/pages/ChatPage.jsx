@@ -26,7 +26,7 @@ export const ChatPage = () => {
 
   // * Splitting context based on heavily re-rendered data can improve optimization. Note that any update to the context value will re-render all consumers *
 
-  // TODO: FOCUSING ON USER (THAT DOES NOT HAVE AN ACTIVE THREAD) SHOULD DISPLAY AN BLANK CHAT BOX AS NO THREAD CURRENTLY EXISTS. CURRENTLY FOCUSING ON A USER CONTINUES TO DISPLAY THE MESSAGES OF THE LAST FOCUSED ACTIVE THREAD INSTEAD OF AN EMPTY CHAT BOX.
+  // TODO => When logged in as 'niko' and having started a thread with 'zoe', thread is successfully created as well as correct receiver name in threads. However, when logging in as 'zoe', the created thread from 'niko' continues to show the name of the receiver in niko's point of view (which is zoe). I need to display the receiver as 'niko' instead of zoe when the authenticated user name matches the name of the reciever.
 
   const users = useMemo(
     () => ({
@@ -38,7 +38,7 @@ export const ChatPage = () => {
     }),
     [fetchedUsers, selectedUserData, selectedReceiverId]
   );
-
+  354633445677982;
   const threadData = useMemo(
     () => ({
       existingThreads,
