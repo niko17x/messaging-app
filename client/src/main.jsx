@@ -16,8 +16,10 @@ import "./index.scss";
 import "react-toastify/dist/ReactToastify.css";
 import ErrorPage from "../pages/ErrorPage";
 import { ProfilePage } from "../pages/ProfilePage";
-// import { LobbyPage } from "../pages/LobbyPage";
 import { ChatPage } from "../pages/ChatPage";
+import { UserProvider } from "../components/context/UserContext";
+import { ThreadProvider } from "../components/context/ThreadContext";
+import { ChatProvider } from "../components/context/ChatContext";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,7 +28,6 @@ const router = createBrowserRouter(
       <Route index={true} path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      {/* <Route path="/lobby/:id" element={<LobbyPage />} /> */}
       <Route path="/chat/:id" element={<ChatPage />} />
       <Route path="/profile/:id" element={<ProfilePage />} />
       <Route path="*" element={<ErrorPage />} />
@@ -47,8 +48,14 @@ if (rootElement) {
 
   root.render(
     <React.StrictMode>
-      <RouterProvider router={router} />
-      <ToastContainer />
+      <UserProvider>
+        <ThreadProvider>
+          <ChatProvider>
+            <RouterProvider router={router} />
+            <ToastContainer position="bottom-left" />
+          </ChatProvider>
+        </ThreadProvider>
+      </UserProvider>
     </React.StrictMode>
   );
 }

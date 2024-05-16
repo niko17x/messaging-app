@@ -14,6 +14,7 @@ export const getThread = asyncHandler(async (req, res) => {
 
 export const getThreads = asyncHandler(async (req, res) => {
   const sender = req.params.id;
+  console.log(sender);
 
   const existingThread = await Thread.find({
     $or: [

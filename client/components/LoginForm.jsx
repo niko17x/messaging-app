@@ -72,6 +72,7 @@ export const LoginForm = () => {
               placeholder="Username"
               value={username}
               onChange={handleFormDataChange}
+              autoFocus={true}
             />
           </label>
           <label htmlFor="password">

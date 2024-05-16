@@ -1,19 +1,20 @@
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "./context/UserContext";
 
 export const Header = () => {
   const [authUsername, setAuthUsername] = useState();
 
-  const { userData } = useFetchAuthUser();
+  const { authUser } = useContext(UserContext);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userData) {
-      setAuthUsername(userData.username);
+    if (authUser) {
+      setAuthUsername(authUser.username);
     }
-  }, [userData]);
+  }, [authUser]);
 
   const handleLogout = async () => {
     try {
@@ -48,11 +49,11 @@ export const Header = () => {
 
       {authUsername ? (
         <div>
-          <div onClick={() => navigate(`/profile/${userData._id}`)}>
+          <div onClick={() => navigate(`/profile/${authUser._id}`)}>
             Profile
           </div>
           {/* <div onClick={() => navigate(`/lobby/${userData._id}`)}>Lobby</div> */}
-          <div onClick={() => navigate(`/chat/${userData._id}`)}>Chat</div>
+          <div onClick={() => navigate(`/chat/${authUser._id}`)}>Chat</div>
           <div onClick={handleLogout}>Logout</div>
         </div>
       ) : (

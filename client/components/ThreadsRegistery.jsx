@@ -1,16 +1,20 @@
 import { useCallback, useContext, useState } from "react";
-import { ChatContext, ThreadContext, UserContext } from "../pages/ChatPage";
 import { toast } from "react-toastify";
-import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
+import { UserContext } from "./context/UserContext";
+import { ThreadContext } from "./context/ThreadContext";
 
 export const ThreadsRegistery = () => {
   const [focusedThreadId, setFocusedThreadId] = useState("");
 
-  const { userData } = useFetchAuthUser();
+  const { authUser } = useContext(UserContext);
 
-  const { setSelectedRecieverId, setSelectedUserData } =
-    useContext(UserContext);
-  const { isUserFocused, setIsUserFocused } = useContext(ChatContext);
+  const {
+    setSelectedUserData,
+    setSelectedRecieverId,
+    isUserFocused,
+    setIsUserFocused,
+  } = useContext(UserContext);
+
   const {
     existingThreads,
     setSelectedThread,
@@ -124,7 +128,7 @@ export const ThreadsRegistery = () => {
                 onClick={() => handleClick(threads, participant)}
               >
                 <li>
-                  {participant.receiver._id === userData._id
+                  {participant.receiver._id === authUser._id
                     ? participant.sender.username
                     : participant.receiver.username}
                 </li>

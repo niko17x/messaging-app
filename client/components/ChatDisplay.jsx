@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { ChatFunctions } from "./ChatFunctions";
-import { ChatContext, UserContext } from "../pages/ChatPage";
+import { UserContext } from "./context/UserContext";
+import { ChatContext } from "./context/ChatContext";
 
 export const ChatDisplay = () => {
   const { chatMessages } = useContext(ChatContext);
-  const { selectedUserData } = useContext(UserContext);
 
-  // when new thread gets created, display new thread using new thread ID
+  const { selectedUserData } = useContext(UserContext);
 
   // display empty chat screen when focusing on a user from user list
   const displayEmptyChatScreen = () => {

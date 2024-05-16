@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
+import { useContext, useEffect, useState } from "react";
 import { MessengerForm } from "./MessengerForm";
+import { UserContext } from "./context/UserContext";
 
 export const Messenger = ({
   firstThreadId,
@@ -13,14 +13,14 @@ export const Messenger = ({
   const [messages, setMessages] = useState([]);
   const [messengerFormData, setMessengerFormData] = useState("");
 
-  const { userData } = useFetchAuthUser();
+  const { authUser } = useContext(UserContext);
 
   const onMessengerFormData = (data) => {
     setMessengerFormData(data);
   };
 
   useEffect(() => {
-    userData && setSender(userData._id);
+    authUser && setSender(authUser._id);
     selectedUserData && setReceiver(selectedUserData._id);
 
     if (firstThreadId || selectedUserData) {
@@ -31,7 +31,7 @@ export const Messenger = ({
           : firstThreadId.participants[0].receiver.username
       );
     }
-  }, [userData, selectedUserData, firstThreadId]);
+  }, [authUser, selectedUserData, firstThreadId]);
 
   const createThread = async () => {
     if (!sender || !receiver) {

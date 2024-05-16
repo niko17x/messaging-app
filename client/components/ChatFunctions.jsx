@@ -1,13 +1,13 @@
 import { useContext, useRef, useState } from "react";
-import { ChatContext, ThreadContext, UserContext } from "../pages/ChatPage";
-import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 import { toast } from "react-toastify";
+import { UserContext } from "./context/UserContext";
+import { ChatContext } from "./context/ChatContext";
+import { ThreadContext } from "./context/ThreadContext";
 
 export const ChatFunctions = () => {
   const [message, setMessage] = useState("");
   const localThreadId = useRef(null);
 
-  const { selectedUserData, setSelectedUserData } = useContext(UserContext);
   const {
     selectedThread,
     setRenderedNewThread,
@@ -15,20 +15,20 @@ export const ChatFunctions = () => {
     existingThreads,
     setNewlyCreatedThreadId,
   } = useContext(ThreadContext);
-  const { setMessageCreated, setIsUserFocused } = useContext(ChatContext);
-
-  const { userData } = useFetchAuthUser();
+  const { selectedUserData, setSelectedUserData, setIsUserFocused, authUser } =
+    useContext(UserContext);
+  const { setMessageCreated } = useContext(ChatContext);
 
   const createNewThread = async () => {
     try {
-      if (userData && selectedUserData) {
+      if (authUser && selectedUserData) {
         const response = await fetch("/api/thread/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            sender: userData._id,
+            sender: authUser._id,
             receiver: selectedUserData._id,
           }),
         });
@@ -47,7 +47,7 @@ export const ChatFunctions = () => {
         }
       } else {
         console.log(
-          `userData: ${userData} or selectedUserData: ${selectedUserData} not found`
+          `userData: ${authUser} or selectedUserData: ${selectedUserData} not found`
         );
       }
     } catch (err) {

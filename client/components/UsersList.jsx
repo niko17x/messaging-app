@@ -1,19 +1,10 @@
-import { useEffect, useState } from "react";
-import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "./context/UserContext";
 
 export const UsersList = ({ onSelectedUserData, onSelectedThreadId }) => {
   const [listUsers, setListUsers] = useState([]);
-  const [authUser, setAuthUser] = useState();
-  const [sender, setSender] = useState("");
 
-  const { userData } = useFetchAuthUser();
-
-  useEffect(() => {
-    if (userData) {
-      setAuthUser(userData.username);
-      setSender(userData._id);
-    }
-  }, [userData]);
+  const { authUser } = useContext(UserContext);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -27,7 +18,7 @@ export const UsersList = ({ onSelectedUserData, onSelectedThreadId }) => {
         const data = await response.json();
         if (response.ok) {
           const updatedListUsers = data.users.filter(
-            (user) => user.username !== authUser
+            (user) => user.username !== authUser.username
           );
           setListUsers(updatedListUsers);
         }
@@ -44,10 +35,10 @@ export const UsersList = ({ onSelectedUserData, onSelectedThreadId }) => {
   };
 
   const findThreadIdWithParticipants = async (userId) => {
-    if (sender && userId) {
+    if (authUser._id && userId) {
       try {
         const response = await fetch(
-          `/api/thread/threads?sender=${sender}&receiver=${userId}`,
+          `/api/thread/threads?sender=${authUser._id}&receiver=${userId}`,
           {
             method: "GET",
             headers: {
@@ -66,8 +57,6 @@ export const UsersList = ({ onSelectedUserData, onSelectedThreadId }) => {
       }
     }
   };
-
-  console.log("usersList");
 
   return (
     <div className="users-list">

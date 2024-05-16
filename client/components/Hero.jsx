@@ -1,17 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
+import { UserContext } from "./context/UserContext";
 
 export const Hero = () => {
-  const [user, setUser] = useState(false);
-
-  const { userData } = useFetchAuthUser();
-
-  useEffect(() => {
-    userData ? setUser(true) : setUser(false);
-  }, [userData]);
-
   const navigate = useNavigate();
+
+  const { authUser } = useContext(UserContext);
 
   return (
     <div className="center-container">
@@ -25,7 +19,7 @@ export const Hero = () => {
           communication with Thread Connect, where every message bridges hearts
           and builds communities.
         </p>
-        {user ? (
+        {/* {!userData ? (
           <div className="action-buttons">
             <button type="button" onClick={() => navigate("/login")}>
               Login
@@ -41,7 +35,7 @@ export const Hero = () => {
           >
             Lobby
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

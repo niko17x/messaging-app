@@ -1,28 +1,34 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { ChatContext, ThreadContext, UserContext } from "../pages/ChatPage.jsx";
-import { useFetchAuthUser } from "../hooks/useFetchAuthUser.jsx";
+import { useCallback, useContext, useState } from "react";
+import { UserContext } from "./context/UserContext.jsx";
+import { ThreadContext } from "./context/ThreadContext.jsx";
+import { useFilterUsersFromList } from "../hooks/useFilterUsersFromList.jsx";
+import { useUniqueReceiverIds } from "../hooks/useUniqueReceiverIds.jsx";
 
 export const UsersRegistry = () => {
+  // local state
   const [focusedUser, setFocusedUser] = useState("");
   const [receiverParticipants, setReceiverParticipants] = useState([]);
   const [updatedFetchedUsers, setUpdatedFetchedUsers] = useState([]);
 
-  const { fetchedUsers, setSelectedUserData } = useContext(UserContext);
+  const {
+    setSelectedUserData,
+    fetchedUsers,
+    setIsUserFocused,
+    isUserFocused,
+    authUser,
+  } = useContext(UserContext);
   const { renderedNewThread, existingThreads, setSelectedThread } =
     useContext(ThreadContext);
-  const { setIsUserFocused, isUserFocused } = useContext(ChatContext);
 
-  const { userData } = useFetchAuthUser();
+  useUniqueReceiverIds(existingThreads, setReceiverParticipants);
 
-  useEffect(() => {
-    const allReceiverIds = existingThreads.flatMap((thread) =>
-      thread.participants.map((participant) => participant.receiver._id)
-    );
-
-    const uniqueRecieverIds = Array.from(new Set(allReceiverIds));
-
-    setReceiverParticipants(uniqueRecieverIds);
-  }, [existingThreads]);
+  useFilterUsersFromList({
+    fetchedUsers,
+    authUser,
+    receiverParticipants,
+    setUpdatedFetchedUsers,
+    renderedNewThread,
+  });
 
   const handleClick = useCallback(
     (data) => {
@@ -33,18 +39,6 @@ export const UsersRegistry = () => {
     },
     [setSelectedUserData, setIsUserFocused, setSelectedThread]
   );
-
-  useEffect(() => {
-    let removeAuthUserFromList = fetchedUsers.filter(
-      (user) => user._id !== userData._id
-    );
-
-    removeAuthUserFromList = removeAuthUserFromList.filter(
-      (user) => !receiverParticipants.includes(user._id)
-    );
-
-    setUpdatedFetchedUsers(removeAuthUserFromList);
-  }, [fetchedUsers, userData._id, receiverParticipants, renderedNewThread]);
 
   return (
     <div className="users-list">
