@@ -4,7 +4,6 @@ import { UserContext } from "../components/context/UserContext";
 export const useFetchAllUsers = () => {
   const { setFetchedUsers } = useContext(UserContext);
 
-  // fetch all users
   useEffect(() => {
     const fetchUsers = async () => {
       try {

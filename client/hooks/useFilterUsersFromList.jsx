@@ -1,27 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 export const useFilterUsersFromList = ({
   fetchedUsers,
   authUser,
   receiverParticipants,
   setUpdatedFetchedUsers,
-  renderedNewThread,
+  // renderedNewThread,
 }) => {
+  const filteredUsers = useMemo(() => {
+    return fetchedUsers.filter(
+      (user) =>
+        user._id !== authUser._id && !receiverParticipants.includes(user._id)
+    );
+  }, [fetchedUsers, authUser, receiverParticipants]);
+
   useEffect(() => {
-    let removeAuthUserFromList = fetchedUsers.filter(
-      (user) => user._id !== authUser._id
-    );
-
-    removeAuthUserFromList = removeAuthUserFromList.filter(
-      (user) => !receiverParticipants.includes(user._id)
-    );
-
-    setUpdatedFetchedUsers(removeAuthUserFromList);
-  }, [
-    fetchedUsers,
-    authUser,
-    receiverParticipants,
-    renderedNewThread,
-    setUpdatedFetchedUsers,
-  ]);
+    setUpdatedFetchedUsers(filteredUsers);
+  }, [filteredUsers, setUpdatedFetchedUsers]);
 };

@@ -1,19 +1,24 @@
-import { useState, useEffect } from "react";
+import { useEffect, useContext } from "react";
+import { ThreadContext } from "../components/context/ThreadContext";
+import { UserContext } from "../components/context/UserContext";
+import { ChatContext } from "../components/context/ChatContext";
 
-export const useFetchAllThreads = (
-  userData,
-  messageCreated,
-  renderedNewThread
-) => {
-  const [existingThreads, setExistingThreads] = useState([]);
-  const [defaultThreadId, setDefaultThreadId] = useState(null);
+export const useFetchAllThreads = () => {
+  const {
+    // existingThreads,
+    // defaultThreadId,
+    setExistingThreads,
+    setDefaultThreadId,
+  } = useContext(ThreadContext);
+  const { authUser } = useContext(UserContext);
+  const { messageCreated } = useContext(ChatContext);
 
   useEffect(() => {
     const fetchAllThreads = async () => {
-      if (userData && userData._id) {
+      if (authUser && authUser._id) {
         try {
           const response = await fetch(
-            `/api/thread/all-threads/${userData._id}`,
+            `/api/thread/all-threads/${authUser._id}`,
             {
               method: "GET",
               headers: {
@@ -31,6 +36,7 @@ export const useFetchAllThreads = (
                 ? prevThreads
                 : newThreads
             );
+
             if (newThreads.length > 0) {
               setDefaultThreadId(newThreads[0]._id);
             } else {
@@ -44,10 +50,10 @@ export const useFetchAllThreads = (
         }
       }
     };
-    if (userData) {
+    if (authUser) {
       fetchAllThreads();
     }
-  }, [userData, renderedNewThread, messageCreated]);
+  }, [authUser, messageCreated, setDefaultThreadId, setExistingThreads]);
 
-  return { existingThreads, defaultThreadId };
+  // return { existingThreads, defaultThreadId };
 };

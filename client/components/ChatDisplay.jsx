@@ -1,14 +1,21 @@
 import { useContext } from "react";
 import { ChatFunctions } from "./ChatFunctions";
 import { UserContext } from "./context/UserContext";
-import { ChatContext } from "./context/ChatContext";
+import { useFetchAllMessages } from "../hooks/useFetchAllMessages";
+import { ThreadContext } from "./context/ThreadContext";
 
 export const ChatDisplay = () => {
-  const { chatMessages } = useContext(ChatContext);
-
   const { selectedUserData } = useContext(UserContext);
+  const { newlyCreatedThreadId, selectedThread, defaultThreadId } =
+    useContext(ThreadContext);
 
-  // display empty chat screen when focusing on a user from user list
+  const { chatMessages } = useFetchAllMessages({
+    newlyCreatedThreadId,
+    selectedThread,
+    defaultThreadId,
+  });
+
+  // display empty chat screen when focusing on a user from user lista'''''
   const displayEmptyChatScreen = () => {
     return selectedUserData ? (
       <div className="send-message-intro">

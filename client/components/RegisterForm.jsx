@@ -13,6 +13,7 @@ export const RegisterForm = () => {
   });
 
   const { firstName, lastName, username, email, password } = formData;
+
   const navigate = useNavigate();
 
   const handleFormDataChange = (e) => {
@@ -39,8 +40,6 @@ export const RegisterForm = () => {
         },
         body: JSON.stringify(formData),
       });
-
-      console.log(formData);
 
       if (response.ok) {
         const data = await response.json();

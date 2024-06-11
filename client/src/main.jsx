@@ -40,10 +40,14 @@ if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
 
   // root.render(
-  //   <div>
-  //     <RouterProvider router={router} />,
-  //     <ToastContainer />
-  //   </div>
+  //   <UserProvider>
+  //     <ThreadProvider>
+  //       <ChatProvider>
+  //         <RouterProvider router={router} />
+  //         <ToastContainer position="bottom-left" />
+  //       </ChatProvider>
+  //     </ThreadProvider>
+  //   </UserProvider>
   // );
 
   root.render(

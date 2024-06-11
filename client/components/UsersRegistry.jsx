@@ -40,6 +40,8 @@ export const UsersRegistry = () => {
     [setSelectedUserData, setIsUserFocused, setSelectedThread]
   );
 
+  // console.log("second");
+
   return (
     <div className="users-list">
       <ul>

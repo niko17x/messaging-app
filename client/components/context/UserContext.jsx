@@ -14,10 +14,10 @@ export const UserProvider = ({ children }) => {
   const { userData } = useFetchAuthUser();
 
   useEffect(() => {
-    if (userData) {
+    if (userData && userData._id) {
       setAuthUser(userData);
     }
-  }, [userData]);
+  }, [userData, authUser]);
 
   const users = useMemo(
     () => ({

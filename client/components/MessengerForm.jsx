@@ -1,34 +1,14 @@
 import { useState } from "react";
+import { createNewMessage } from "./utils/createNewMessage";
+import { determineActiveThread } from "./utils/determineActiveThread";
+import { createNewThread } from "./utils/createNewThread";
 
 export const MessengerForm = ({
   firstThreadId,
-  createThread,
   selectedThreadId,
   onMessengerFormData,
 }) => {
   const [message, setMessage] = useState("");
-
-  const createMessage = async (activeThreadId) => {
-    try {
-      const response = await fetch("/api/messages/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message, activeThreadId }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setMessage("");
-        onMessengerFormData(data);
-        console.log(`Message successfuly created: ${data.message}`);
-      } else {
-        console.error(`Message failed to create: ${data.message}`);
-      }
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,17 +20,9 @@ export const MessengerForm = ({
 
     let activeThreadId = selectedThreadId ? selectedThreadId : firstThreadId;
 
-    if (selectedThreadId === null) {
-      const activeThreadResponse = await createThread();
-      activeThreadId = activeThreadResponse;
-    }
+    determineActiveThread(selectedThreadId, activeThreadId, createNewThread());
 
-    if (!activeThreadId) {
-      console.error(`Failed to retrieve activeThreadId: ${activeThreadId}`);
-      return;
-    }
-
-    createMessage(activeThreadId);
+    createNewMessage(activeThreadId, message, setMessage, onMessengerFormData);
   };
 
   return (

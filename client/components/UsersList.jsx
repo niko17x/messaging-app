@@ -1,68 +1,23 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "./context/UserContext";
+import { useFetchUsersList } from "../hooks/useFetchUsersList";
+import { fetchParticipantThreadIds } from "./utils/fetchParticipantThreadIds";
 
 export const UsersList = ({ onSelectedUserData, onSelectedThreadId }) => {
-  const [listUsers, setListUsers] = useState([]);
-
   const { authUser } = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("/api/user/users", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          const updatedListUsers = data.users.filter(
-            (user) => user.username !== authUser.username
-          );
-          setListUsers(updatedListUsers);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchUsers();
-  }, [authUser]);
+  const listUsers = useFetchUsersList(authUser);
 
   const handleClick = async (user, userId) => {
     onSelectedUserData(user);
-    findThreadIdWithParticipants(userId);
-  };
-
-  const findThreadIdWithParticipants = async (userId) => {
-    if (authUser._id && userId) {
-      try {
-        const response = await fetch(
-          `/api/thread/threads?sender=${authUser._id}&receiver=${userId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data = await response.json();
-        if (response.ok) {
-          onSelectedThreadId(data.existingThread._id);
-        } else {
-          onSelectedThreadId(null);
-        }
-      } catch (err) {
-        console.warn(err.message);
-      }
-    }
+    fetchParticipantThreadIds(userId, onSelectedThreadId);
   };
 
   return (
     <div className="users-list">
       <ul>
         <h1>Users</h1>
-        {listUsers.map((user) => (
+        {listUsers?.map((user) => (
           <li key={user._id} onClick={() => handleClick(user, user._id)}>
             <img
               src="../src/assets/images/profile-image-icon.png"

@@ -47,8 +47,6 @@ export const MessageThreads = ({
     onSelectedThreadId(thread._id);
   };
 
-  console.log("messagethreads");
-
   return (
     <div className="message-threads">
       <h1>Threads</h1>

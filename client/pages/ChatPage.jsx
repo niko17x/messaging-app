@@ -1,14 +1,9 @@
-import { useContext } from "react";
 import { ChatDisplay } from "../components/ChatDisplay";
 import { Header } from "../components/Header";
 import { ThreadsRegistery } from "../components/ThreadsRegistery";
 import { UsersRegistry } from "../components/UsersRegistry";
-import { useFetchAllMessages } from "../hooks/useFetchAllMessages";
 import { useFetchAllThreads } from "../hooks/useFetchAllThreads";
 import { useFetchAllUsers } from "../hooks/useFetchAllUsers";
-import { ThreadContext } from "../components/context/ThreadContext";
-import { ChatContext } from "../components/context/ChatContext";
-import { UserContext } from "../components/context/UserContext";
 
 // * Splitting context based on heavily re-rendered data can improve optimization. Note that any update to the context value will re-render all consumers *
 
@@ -20,25 +15,10 @@ import { UserContext } from "../components/context/UserContext";
  */
 
 export const ChatPage = () => {
-  // useEffect(() => {
-  //   setRenderedNewThread(false);
-  // }, [selectedUserData, selectedThread, setRenderedNewThread]);
-
-  const { authUser } = useContext(UserContext);
-  const { newlyCreatedThreadId, selectedThread, defaultThreadId } =
-    useContext(ThreadContext);
-  const { messageCreated } = useContext(ChatContext);
-
   useFetchAllUsers();
-  useFetchAllThreads(authUser, messageCreated);
+  useFetchAllThreads();
 
-  useFetchAllMessages({
-    newlyCreatedThreadId,
-    selectedThread,
-    defaultThreadId,
-    messageCreated,
-  });
-
+  console.log("parent");
   return (
     <div className="lobby-page">
       <Header />

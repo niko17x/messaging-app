@@ -1,13 +1,16 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ChatContext } from "../components/context/ChatContext";
 
 export const useFetchAllMessages = ({
   newlyCreatedThreadId,
   selectedThread,
   defaultThreadId,
-  messageCreated,
 }) => {
-  const { setChatMessages } = useContext(ChatContext);
+  // const { setChatMessages } = useContext(ChatContext);
+  const { messageCreated } = useContext(ChatContext);
+
+  const [chatMessages, setChatMessages] = useState([]);
+  // const [messageCreated, setMessageCreated] = useState(false);
 
   useEffect(() => {
     let threadId;
@@ -47,4 +50,6 @@ export const useFetchAllMessages = ({
     newlyCreatedThreadId,
     setChatMessages,
   ]);
+
+  return { chatMessages };
 };

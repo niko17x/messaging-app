@@ -5,8 +5,6 @@ import Message from "../models/messageModel.js";
 export const createMessage = asyncHandler(async (req, res) => {
   const { message, activeThreadId } = req.body;
 
-  console.log(activeThreadId);
-
   if (!message) {
     return res.status(400).json({ message: "Message input is empty" });
   }

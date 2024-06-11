@@ -1,41 +1,31 @@
-import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "./context/UserContext";
+import { useFetchfetchLogoutUser } from "../hooks/useFetchLogoutUser";
+import { useFetchAuthUser } from "../hooks/useFetchAuthUser";
 
 export const Header = () => {
-  const [authUsername, setAuthUsername] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   const { authUser } = useContext(UserContext);
+  const { userData } = useFetchAuthUser();
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (authUser) {
-      setAuthUsername(authUser.username);
-    }
-  }, [authUser]);
+  const { fetchLogoutUser } = useFetchfetchLogoutUser();
 
   const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/user/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        setAuthUsername("");
-        localStorage.removeItem("userInfo");
-        toast.success("Logout successfull", {
-          toastId: "logout-successful",
-        });
-        navigate("/");
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    await fetchLogoutUser();
+    if (authUser !== null) setIsLoggedIn(false);
   };
+
+  useEffect(() => {
+    if (userData && userData._id) {
+      setIsLoggedIn(true);
+    }
+  }, [userData]);
+
+  // console.log("first");
 
   return (
     <div className="header">
@@ -47,17 +37,19 @@ export const Header = () => {
         />
       </Link>
 
-      {authUsername ? (
+      {isLoggedIn ? (
         <div>
-          <div onClick={() => navigate(`/profile/${authUser._id}`)}>
+          <div onClick={() => navigate(`/profile/${userData._id}`)}>
             Profile
           </div>
           {/* <div onClick={() => navigate(`/lobby/${userData._id}`)}>Lobby</div> */}
-          <div onClick={() => navigate(`/chat/${authUser._id}`)}>Chat</div>
+          <div onClick={() => navigate(`/chat/${userData._id}`)}>Chat</div>
           <div onClick={handleLogout}>Logout</div>
         </div>
       ) : (
-        <div onClick={() => navigate("/login")}>Login</div>
+        <div>
+          <div onClick={() => navigate("/login")}>Login</div>
+        </div>
       )}
     </div>
   );
